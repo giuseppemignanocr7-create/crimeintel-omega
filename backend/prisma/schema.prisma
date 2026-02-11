@@ -8,26 +8,127 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ─────────────────────────────────────────────
-// USERS & AUTH
-// ─────────────────────────────────────────────
-
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String     @id @default(uuid())
+  email     String     @unique
   password  String
-  role      Role     @default(INVESTIGATOR)
+  role      Role       @default(INVESTIGATOR)
   name      String?
-  isActive  Boolean  @default(true)
+  isActive  Boolean    @default(true)
   lastLogin DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  cases     Case[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   auditLogs AuditLog[]
+  cases     Case[]
 
   @@index([email])
   @@index([role])
+}
+
+model Case {
+  id           String     @id @default(uuid())
+  caseNumber   String     @unique @default(uuid())
+  title        String
+  description  String?
+  status       CaseStatus @default(OPEN)
+  priority     Priority   @default(MEDIUM)
+  locationLat  Float?
+  locationLng  Float?
+  locationName String?
+  tags         String[]   @default([])
+  userId       String
+  deletedAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id])
+  evidence     Evidence[]
+  fusion       Fusion?
+  reports      Report[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+model Evidence {
+  id        String       @id @default(uuid())
+  caseId    String
+  type      EvidenceType
+  filePath  String
+  fileName  String
+  fileSize  Int          @default(0)
+  mimeType  String?
+  hash      String       @unique
+  metadata  Json?
+  aiResult  Json?
+  aiStatus  AIStatus     @default(PENDING)
+  deletedAt DateTime?
+  createdAt DateTime     @default(now())
+  chain     Chain[]
+  case      Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([type])
+  @@index([hash])
+  @@index([aiStatus])
+}
+
+model Fusion {
+  id          String   @id @default(uuid())
+  caseId      String   @unique
+  fusionData  Json
+  fusionScore Float    @default(0)
+  confidence  Float    @default(0)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id          String     @id @default(uuid())
+  caseId      String
+  type        ReportType @default(SUMMARY)
+  pdfUrl      String?
+  payload     Json
+  generatedBy String?
+  createdAt   DateTime   @default(now())
+  case        Case       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  resource  String?
+  targetId  String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+  @@index([targetId])
+}
+
+model Chain {
+  id         String      @id @default(uuid())
+  evidenceId String
+  hash       String
+  userId     String
+  action     ChainAction @default(UPLOAD)
+  notes      String?
+  timestamp  DateTime    @default(now())
+  evidence   Evidence    @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  @@index([evidenceId])
+  @@index([timestamp])
 }
 
 enum Role {
@@ -36,37 +137,6 @@ enum Role {
   INVESTIGATOR
   ANALYST
   VIEWER
-}
-
-// ─────────────────────────────────────────────
-// CASES
-// ─────────────────────────────────────────────
-
-model Case {
-  id          String     @id @default(uuid())
-  caseNumber  String     @unique @default(uuid()) // Human-readable case number
-  title       String
-  description String?
-  status      CaseStatus @default(OPEN)
-  priority    Priority   @default(MEDIUM)
-  locationLat Float?
-  locationLng Float?
-  locationName String?
-  tags        String[]   @default([])
-  userId      String
-  deletedAt   DateTime?  // Soft delete
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  user      User       @relation(fields: [userId], references: [id])
-  evidence  Evidence[]
-  fusion    Fusion?
-  reports   Report[]
-
-  @@index([userId])
-  @@index([status])
-  @@index([createdAt])
-  @@index([deletedAt])
 }
 
 enum CaseStatus {
@@ -84,34 +154,6 @@ enum Priority {
   LOW
 }
 
-// ─────────────────────────────────────────────
-// EVIDENCE
-// ─────────────────────────────────────────────
-
-model Evidence {
-  id          String         @id @default(uuid())
-  caseId      String
-  type        EvidenceType
-  filePath    String
-  fileName    String
-  fileSize    Int            @default(0)
-  mimeType    String?
-  hash        String         @unique
-  metadata    Json?
-  aiResult    Json?
-  aiStatus    AIStatus       @default(PENDING)
-  deletedAt   DateTime?
-  createdAt   DateTime       @default(now())
-
-  case  Case    @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  chain Chain[]
-
-  @@index([caseId])
-  @@index([type])
-  @@index([hash])
-  @@index([aiStatus])
-}
-
 enum EvidenceType {
   IMAGE
   VIDEO
@@ -127,85 +169,12 @@ enum AIStatus {
   FAILED
 }
 
-// ─────────────────────────────────────────────
-// FUSION
-// ─────────────────────────────────────────────
-
-model Fusion {
-  id           String   @id @default(uuid())
-  caseId       String   @unique
-  fusionData   Json
-  fusionScore  Float    @default(0)
-  confidence   Float    @default(0)
-  version      Int      @default(1)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
-}
-
-// ─────────────────────────────────────────────
-// REPORTS
-// ─────────────────────────────────────────────
-
-model Report {
-  id         String       @id @default(uuid())
-  caseId     String
-  type       ReportType   @default(SUMMARY)
-  pdfUrl     String?
-  payload    Json
-  generatedBy String?
-  createdAt  DateTime     @default(now())
-
-  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
-
-  @@index([caseId])
-}
-
 enum ReportType {
   SUMMARY
   DETAILED
   FORENSIC
   TIMELINE
   EXPORT
-}
-
-// ─────────────────────────────────────────────
-// AUDIT & CHAIN OF CUSTODY
-// ─────────────────────────────────────────────
-
-model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String?
-  action    String
-  resource  String?  // e.g., "case", "evidence"
-  targetId  String?
-  details   Json?
-  ipAddress String?
-  userAgent String?
-  timestamp DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-  @@index([action])
-  @@index([timestamp])
-  @@index([targetId])
-}
-
-model Chain {
-  id         String      @id @default(uuid())
-  evidenceId String
-  hash       String
-  userId     String
-  action     ChainAction @default(UPLOAD)
-  notes      String?
-  timestamp  DateTime    @default(now())
-
-  evidence Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
-
-  @@index([evidenceId])
-  @@index([timestamp])
 }
 
 enum ChainAction {
