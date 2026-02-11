@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "CrimeIntel",
+    "slug": "crimeintel-mobile",
+    "version": "7.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0a0e1a",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.crimeintel.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0e1a"
+      },
+      "package": "com.crimeintel.mobile"
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-location",
+      "expo-image-picker"
+    ]
+  }
+}

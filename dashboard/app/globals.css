@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ci-bg: #0a0e1a;
+  --ci-card: #111827;
+  --ci-border: #1f2937;
+  --ci-accent: #3b82f6;
+}
+
+body {
+  background-color: var(--ci-bg);
+  color: #e5e7eb;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ci-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ci-border);
+  border-radius: 3px;
+}
+
+.ci-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+}
