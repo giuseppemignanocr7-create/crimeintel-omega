@@ -14,6 +14,7 @@ export default function CaseDetailPage() {
   const [fusion, setFusion] = useState<any>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -78,62 +79,91 @@ export default function CaseDetailPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen"><div className="text-ci-accent">Loading case...</div></div>;
+    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-accent">Loading case...</div></div>;
   }
 
   if (!caseData) {
-    return <div className="flex items-center justify-center min-h-screen"><div className="text-ci-danger">Case not found</div></div>;
+    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-danger">Case not found</div></div>;
   }
 
   const typeIcon: Record<string, string> = { IMAGE: 'img', VIDEO: 'vid', AUDIO: 'aud', DOCUMENT: 'doc', PLATE: 'lpr' };
 
   return (
-    <div className="min-h-screen">
-      <nav className="border-b border-ci-border bg-ci-card px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.push('/')} className="text-2xl font-bold text-ci-accent">CrimeIntel</button>
-          <span className="text-ci-muted">/</span>
-          <button onClick={() => router.push('/cases')} className="text-ci-muted hover:text-ci-text transition">Cases</button>
-          <span className="text-ci-muted">/</span>
-          <span className="text-sm font-mono">{caseData.caseNumber}</span>
+    <div className="min-h-screen min-h-[100dvh]">
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 border-b border-ci-border bg-ci-card/95 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
+          <button onClick={() => router.push('/')} className="text-xl md:text-2xl font-bold text-ci-accent flex-shrink-0">CI</button>
+          <span className="text-ci-muted hidden md:inline">/</span>
+          <button onClick={() => router.push('/cases')} className="text-ci-muted hover:text-ci-text transition hidden md:inline">Cases</button>
+          <span className="text-ci-muted hidden md:inline">/</span>
+          <span className="text-xs md:text-sm font-mono truncate">{caseData.caseNumber}</span>
         </div>
-        <button onClick={() => { api.clearToken(); router.push('/login'); }} className="text-ci-danger text-sm">Logout</button>
+        <div className="hidden md:flex items-center gap-2">
+          <button onClick={() => { api.clearToken(); router.push('/login'); }} className="text-ci-danger text-sm">Logout</button>
+        </div>
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex flex-col gap-1.5 p-2 -mr-2" aria-label="Menu">
+          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-ci-text transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">{caseData.title}</h1>
-            <p className="text-ci-muted mt-1">{caseData.description}</p>
-            <div className="flex gap-3 mt-2 text-sm">
-              <span className="text-ci-warning">{caseData.status}</span>
-              <span className="text-ci-muted">Priority: {caseData.priority}</span>
-              {caseData.locationName && <span className="text-ci-muted">{caseData.locationName}</span>}
+      {menuOpen && (
+        <div className="md:hidden fixed inset-0 z-40" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-overlay absolute inset-0 bg-black/60" />
+          <div className="mobile-menu absolute right-0 top-0 h-full w-64 bg-ci-card border-l border-ci-border pt-16 px-6">
+            <div className="space-y-1">
+              <button onClick={() => { router.push('/'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">Command Center</button>
+              <button onClick={() => { router.push('/cases'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">Cases</button>
+              <button onClick={() => { router.push('/search'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">NeuroSearch</button>
+              <hr className="border-ci-border my-3" />
+              <button onClick={() => { api.clearToken(); router.push('/login'); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-danger hover:bg-red-500/10 transition">Logout</button>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={handleRunFusion} disabled={fusionLoading} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm transition disabled:opacity-50">
-              {fusionLoading ? 'Running...' : 'Run HyperFusion'}
+        </div>
+      )}
+
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">
+        {/* Back button — mobile */}
+        <button onClick={() => router.push('/cases')} className="md:hidden flex items-center gap-1 text-ci-muted text-sm mb-3 active:text-ci-text">
+          <span>←</span> Back to Cases
+        </button>
+
+        {/* Case header */}
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5 md:mb-6">
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold leading-tight">{caseData.title}</h1>
+            {caseData.description && <p className="text-ci-muted text-sm mt-1 line-clamp-3 md:line-clamp-none">{caseData.description}</p>}
+            <div className="flex flex-wrap gap-2 md:gap-3 mt-2 text-sm">
+              <span className="text-ci-warning">{caseData.status}</span>
+              <span className="text-ci-muted">Priority: {caseData.priority}</span>
+              {caseData.locationName && <span className="text-ci-muted truncate max-w-[200px] md:max-w-none">{caseData.locationName}</span>}
+            </div>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <button onClick={handleRunFusion} disabled={fusionLoading} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded text-sm transition disabled:opacity-50">
+              {fusionLoading ? 'Running...' : 'HyperFusion'}
             </button>
-            <button onClick={() => handleGenerateReport('SUMMARY')} className="px-4 py-2 bg-ci-card border border-ci-border rounded text-sm hover:bg-ci-border transition">
-              Generate Report
+            <button onClick={() => handleGenerateReport('SUMMARY')} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-ci-card border border-ci-border rounded text-sm hover:bg-ci-border active:bg-gray-600 transition">
+              Report
             </button>
           </div>
         </div>
 
         {/* Evidence Upload */}
-        <div className="bg-ci-card border border-ci-border rounded-lg p-5 mb-6">
-          <h2 className="font-semibold mb-3">Upload Evidence</h2>
-          <div className="flex gap-3 items-center">
+        <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
+          <h2 className="font-semibold mb-3 text-sm md:text-base">Upload Evidence</h2>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
             <input
               type="file"
               onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-              className="text-sm text-ci-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:bg-ci-accent file:text-white file:cursor-pointer"
+              className="text-sm text-ci-muted file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:bg-ci-accent file:text-white file:cursor-pointer w-full sm:w-auto"
             />
             <button
               onClick={handleUpload}
               disabled={!uploadFile || uploading}
-              className="px-4 py-2 bg-ci-accent hover:bg-ci-accent-hover text-white rounded text-sm transition disabled:opacity-50"
+              className="w-full sm:w-auto px-4 py-2.5 bg-ci-accent hover:bg-ci-accent-hover active:bg-blue-700 text-white rounded text-sm transition disabled:opacity-50"
             >
               {uploading ? 'Uploading...' : 'Upload'}
             </button>
@@ -141,24 +171,26 @@ export default function CaseDetailPage() {
         </div>
 
         {/* Evidence List */}
-        <div className="bg-ci-card border border-ci-border rounded-lg p-5 mb-6">
-          <h2 className="font-semibold mb-3">Evidence ({caseData.evidence?.length || 0})</h2>
+        <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
+          <h2 className="font-semibold mb-3 text-sm md:text-base">Evidence ({caseData.evidence?.length || 0})</h2>
           {caseData.evidence?.length === 0 ? (
             <p className="text-ci-muted text-sm">No evidence uploaded yet</p>
           ) : (
             <div className="space-y-2">
               {caseData.evidence?.map((ev: any) => (
-                <div key={ev.id} className="flex items-center justify-between bg-ci-bg rounded p-3 border border-ci-border">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono bg-ci-accent/20 text-ci-accent px-2 py-1 rounded">{typeIcon[ev.type] || '?'}</span>
-                    <div>
-                      <p className="text-sm font-medium">{ev.fileName}</p>
+                <div key={ev.id} className="flex items-start sm:items-center justify-between gap-2 bg-ci-bg rounded p-3 border border-ci-border">
+                  <div className="flex items-start sm:items-center gap-2 md:gap-3 min-w-0">
+                    <span className="text-xs font-mono bg-ci-accent/20 text-ci-accent px-2 py-1 rounded flex-shrink-0">{typeIcon[ev.type] || '?'}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{ev.fileName}</p>
                       <p className="text-xs text-ci-muted">
-                        {(ev.fileSize / 1024).toFixed(1)}KB &middot; {ev.hash?.substring(0, 12)}... &middot; AI: <span className={ev.aiStatus === 'COMPLETED' ? 'text-ci-success' : ev.aiStatus === 'PROCESSING' ? 'text-ci-warning' : 'text-ci-muted'}>{ev.aiStatus}</span>
+                        {ev.fileSize > 1048576 ? `${(ev.fileSize / 1048576).toFixed(1)}MB` : `${(ev.fileSize / 1024).toFixed(1)}KB`}
+                        <span className="hidden sm:inline"> · {ev.hash?.substring(0, 12)}...</span>
+                        {' · AI: '}<span className={ev.aiStatus === 'COMPLETED' ? 'text-ci-success' : ev.aiStatus === 'PROCESSING' ? 'text-ci-warning' : 'text-ci-muted'}>{ev.aiStatus}</span>
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs text-ci-muted">{new Date(ev.createdAt).toLocaleString()}</span>
+                  <span className="text-xs text-ci-muted whitespace-nowrap flex-shrink-0 hidden sm:block">{new Date(ev.createdAt).toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -167,33 +199,33 @@ export default function CaseDetailPage() {
 
         {/* Fusion Results */}
         {fusion && (
-          <div className="bg-ci-card border border-ci-border rounded-lg p-5 mb-6">
-            <h2 className="font-semibold mb-3">HyperFusion Results</h2>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="bg-ci-bg rounded p-3 text-center border border-ci-border">
-                <p className="text-xs text-ci-muted">Fusion Score</p>
-                <p className="text-2xl font-bold text-purple-400">{(fusion.fusionScore * 100).toFixed(0)}%</p>
+          <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="font-semibold mb-3 text-sm md:text-base">HyperFusion Results</h2>
+            <div className="grid grid-cols-3 gap-2 md:gap-4 mb-4">
+              <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
+                <p className="text-[10px] md:text-xs text-ci-muted">Score</p>
+                <p className="text-lg md:text-2xl font-bold text-purple-400">{(fusion.fusionScore * 100).toFixed(0)}%</p>
               </div>
-              <div className="bg-ci-bg rounded p-3 text-center border border-ci-border">
-                <p className="text-xs text-ci-muted">Confidence</p>
-                <p className="text-2xl font-bold text-ci-accent">{(fusion.confidence * 100).toFixed(0)}%</p>
+              <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
+                <p className="text-[10px] md:text-xs text-ci-muted">Confidence</p>
+                <p className="text-lg md:text-2xl font-bold text-ci-accent">{(fusion.confidence * 100).toFixed(0)}%</p>
               </div>
-              <div className="bg-ci-bg rounded p-3 text-center border border-ci-border">
-                <p className="text-xs text-ci-muted">Version</p>
-                <p className="text-2xl font-bold text-ci-text">{fusion.version}</p>
+              <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
+                <p className="text-[10px] md:text-xs text-ci-muted">Version</p>
+                <p className="text-lg md:text-2xl font-bold text-ci-text">{fusion.version}</p>
               </div>
             </div>
             <details className="text-sm">
-              <summary className="cursor-pointer text-ci-muted hover:text-ci-text transition">View Raw Fusion Data</summary>
-              <pre className="mt-2 bg-ci-bg rounded p-3 overflow-auto text-xs max-h-64 border border-ci-border">{JSON.stringify(fusion.fusionData, null, 2)}</pre>
+              <summary className="cursor-pointer text-ci-muted hover:text-ci-text transition py-1">View Raw Fusion Data</summary>
+              <pre className="mt-2 bg-ci-bg rounded p-3 overflow-auto text-xs max-h-48 md:max-h-64 border border-ci-border">{JSON.stringify(fusion.fusionData, null, 2)}</pre>
             </details>
           </div>
         )}
 
         {/* Reports */}
         {caseData.reports?.length > 0 && (
-          <div className="bg-ci-card border border-ci-border rounded-lg p-5">
-            <h2 className="font-semibold mb-3">Reports ({caseData.reports.length})</h2>
+          <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5">
+            <h2 className="font-semibold mb-3 text-sm md:text-base">Reports ({caseData.reports.length})</h2>
             <div className="space-y-2">
               {caseData.reports.map((r: any) => (
                 <div key={r.id} className="flex items-center justify-between bg-ci-bg rounded p-3 border border-ci-border">
@@ -201,7 +233,7 @@ export default function CaseDetailPage() {
                     <p className="text-sm font-medium">{r.type} Report</p>
                     <p className="text-xs text-ci-muted">{new Date(r.createdAt).toLocaleString()}</p>
                   </div>
-                  <span className="text-xs font-mono text-ci-muted">{r.id.substring(0, 8)}</span>
+                  <span className="text-xs font-mono text-ci-muted hidden sm:block">{r.id.substring(0, 8)}</span>
                 </div>
               ))}
             </div>
