@@ -28,14 +28,17 @@ export class CasesService {
     return created;
   }
 
-  async findAll(userId: string, query: CaseQueryDto) {
+  async findAll(userId: string, role: string, query: CaseQueryDto) {
     const { page = 1, limit = 20, status, priority, search } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {
-      userId,
       deletedAt: null,
     };
+
+    if (role !== 'ADMIN' && role !== 'SUPERVISOR') {
+      where.userId = userId;
+    }
 
     if (status) where.status = status;
     if (priority) where.priority = priority;
@@ -130,14 +133,21 @@ export class CasesService {
     return { message: 'Case deleted' };
   }
 
-  async getStats(userId: string) {
+  async getStats(userId: string, role: string) {
+    const caseFilter: any = { deletedAt: null };
+    const evidenceFilter: any = { deletedAt: null };
+    if (role !== 'ADMIN' && role !== 'SUPERVISOR') {
+      caseFilter.userId = userId;
+      evidenceFilter.case = { userId };
+    }
+
     const [total, open, active, evidence, aiAnalyzed] = await Promise.all([
-      this.prisma.case.count({ where: { userId, deletedAt: null } }),
-      this.prisma.case.count({ where: { userId, status: 'OPEN', deletedAt: null } }),
-      this.prisma.case.count({ where: { userId, status: 'ACTIVE', deletedAt: null } }),
-      this.prisma.evidence.count({ where: { case: { userId }, deletedAt: null } }),
+      this.prisma.case.count({ where: caseFilter }),
+      this.prisma.case.count({ where: { ...caseFilter, status: 'OPEN' } }),
+      this.prisma.case.count({ where: { ...caseFilter, status: 'ACTIVE' } }),
+      this.prisma.evidence.count({ where: evidenceFilter }),
       this.prisma.evidence.count({
-        where: { case: { userId }, aiStatus: 'COMPLETED', deletedAt: null },
+        where: { ...evidenceFilter, aiStatus: 'COMPLETED' },
       }),
     ]);
 

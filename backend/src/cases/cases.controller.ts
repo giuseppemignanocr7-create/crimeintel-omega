@@ -33,14 +33,14 @@ export class CasesController {
 
   @Get()
   @ApiOperation({ summary: 'List all cases with pagination' })
-  findAll(@CurrentUser('id') userId: string, @Query() query: CaseQueryDto) {
-    return this.casesService.findAll(userId, query);
+  findAll(@CurrentUser() user: any, @Query() query: CaseQueryDto) {
+    return this.casesService.findAll(user.id, user.role, query);
   }
 
   @Get('stats')
   @ApiOperation({ summary: 'Get case statistics' })
-  getStats(@CurrentUser('id') userId: string) {
-    return this.casesService.getStats(userId);
+  getStats(@CurrentUser() user: any) {
+    return this.casesService.getStats(user.id, user.role);
   }
 
   @Get(':id')
