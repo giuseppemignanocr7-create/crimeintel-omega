@@ -1,11 +1,92 @@
 // Mock data for demo/offline mode — no backend required
 
-export const DEMO_USER = {
-  id: 'demo-user-001',
-  email: 'demo@crimeintel.com',
-  name: 'Ospite Demo',
+export const DEMO_ACCOUNTS = [
+  {
+    id: 'demo-admin',
+    email: 'admin@crimeintel.com',
+    name: 'Commissario Ferretti',
+    role: 'ADMIN',
+    department: 'Direzione Centrale',
+    description: 'Accesso completo: gestione utenti, configurazione sistema, tutti i casi e prove.',
+    icon: '👑',
+    color: 'from-red-500 to-orange-500',
+    features: ['Gestione Utenti', 'System Settings', 'Audit Log', 'Tutti i Moduli'],
+  },
+  {
+    id: 'demo-supervisor',
+    email: 'supervisore@crimeintel.com',
+    name: 'Isp. Capo Verdi',
+    role: 'SUPERVISOR',
+    department: 'Squadra Mobile',
+    description: 'Supervisione casi, assegnazione investigatori, report avanzati.',
+    icon: '🎖️',
+    color: 'from-blue-500 to-cyan-500',
+    features: ['Supervisione Casi', 'AI Engine', 'Report', 'CrimeGraph'],
+  },
+  {
+    id: 'demo-investigator',
+    email: 'investigatore@crimeintel.com',
+    name: 'Sov. Neri Sara',
+    role: 'INVESTIGATOR',
+    department: 'Sezione Indagini',
+    description: 'Gestione casi propri, caricamento prove, analisi AI, ricerca.',
+    icon: '🔍',
+    color: 'from-green-500 to-emerald-500',
+    features: ['Casi Propri', 'Upload Prove', 'AI Analysis', 'NeuroSearch'],
+  },
+  {
+    id: 'demo-analyst',
+    email: 'analista@crimeintel.com',
+    name: 'Dott. Bianchi Luca',
+    role: 'ANALYST',
+    department: 'Analisi Criminale',
+    description: 'Analisi dati, consultazione casi, generazione report, intelligence predittiva.',
+    icon: '📊',
+    color: 'from-purple-500 to-violet-500',
+    features: ['Analytics', 'Report', 'Predictive Intel', 'CrimeGraph'],
+  },
+  {
+    id: 'demo-viewer',
+    email: 'osservatore@crimeintel.com',
+    name: 'Dott.ssa Rossi Elena',
+    role: 'VIEWER',
+    department: 'Magistratura',
+    description: 'Consultazione casi e prove in sola lettura. Nessuna modifica consentita.',
+    icon: '👁️',
+    color: 'from-gray-400 to-gray-500',
+    features: ['Lettura Casi', 'Visualizza Prove', 'Consulta Report'],
+  },
+];
+
+export let DEMO_USER = {
+  id: 'demo-admin',
+  email: 'admin@crimeintel.com',
+  name: 'Commissario Ferretti',
   role: 'ADMIN',
 };
+
+export function setDemoUser(role: string) {
+  const account = DEMO_ACCOUNTS.find(a => a.role === role) || DEMO_ACCOUNTS[0];
+  DEMO_USER = { id: account.id, email: account.email, name: account.name, role: account.role };
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('ci_demo_user', JSON.stringify(DEMO_USER));
+  }
+  return DEMO_USER;
+}
+
+export function getDemoUser() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('ci_demo_user');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        DEMO_USER = parsed;
+        return parsed;
+      } catch { /* ignore */ }
+    }
+  }
+  return DEMO_USER;
+}
 
 export const DEMO_TOKEN = 'demo-offline-token';
 

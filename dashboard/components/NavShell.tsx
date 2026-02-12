@@ -95,14 +95,23 @@ export function NavShell({ children, current }: { children: React.ReactNode; cur
         ))}
       </div>
 
+      {/* Demo mode banner */}
+      {api.getToken() === 'demo-offline-token' && (!collapsed || mobile) && (
+        <div className="mx-2 mb-1 px-3 py-1.5 bg-purple-600/15 border border-purple-500/30 rounded text-center">
+          <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Demo Mode</p>
+        </div>
+      )}
+
       {/* Bottom: user + logout */}
       <div className={`border-t border-ci-border p-3 ${collapsed && !mobile ? 'px-2' : ''}`}>
         {(!collapsed || mobile) && (
           <div className="flex items-center gap-2 px-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-ci-accent/20 flex items-center justify-center text-ci-accent font-bold text-xs flex-shrink-0">A</div>
+            <div className="w-8 h-8 rounded-full bg-ci-accent/20 flex items-center justify-center text-ci-accent font-bold text-xs flex-shrink-0">
+              {(api.getCurrentDemoUser()?.name || 'U').charAt(0)}
+            </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium truncate">Admin Demo</p>
-              <p className="text-[10px] text-ci-muted truncate">demo@crimeintel.com</p>
+              <p className="text-xs font-medium truncate">{api.getCurrentDemoUser()?.name || 'Utente'}</p>
+              <p className="text-[10px] text-ci-muted truncate">{api.getCurrentDemoUser()?.role || ''}</p>
             </div>
           </div>
         )}

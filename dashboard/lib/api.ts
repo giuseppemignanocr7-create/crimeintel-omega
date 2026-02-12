@@ -1,6 +1,7 @@
 import {
   DEMO_USER, DEMO_TOKEN, DEMO_CASES, DEMO_STATS,
   getDemoCase, getDemoEvidence, DEMO_FUSION, demoSearch,
+  DEMO_ACCOUNTS, setDemoUser, getDemoUser,
 } from './mock-data';
 import type { Profile, Case, CaseWithCounts, Evidence, FusionResult, SearchResults, CaseStats, PaginatedResponse } from './types';
 
@@ -114,6 +115,21 @@ class ApiClient {
       this.setToken(DEMO_TOKEN);
       return { user: DEMO_USER, token: DEMO_TOKEN };
     }
+  }
+
+  async demoLoginAs(role: string) {
+    const user = setDemoUser(role);
+    this.setDemo(true);
+    this.setToken(DEMO_TOKEN);
+    return { user, token: DEMO_TOKEN };
+  }
+
+  getDemoAccounts() {
+    return DEMO_ACCOUNTS;
+  }
+
+  getCurrentDemoUser() {
+    return getDemoUser();
   }
 
   // Cases
