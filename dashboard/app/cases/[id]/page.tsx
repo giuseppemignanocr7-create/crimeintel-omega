@@ -50,8 +50,8 @@ export default function CaseDetailPage() {
       await api.uploadEvidence(id, uploadFile);
       setUploadFile(null);
       loadCase();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Upload failed');
     } finally {
       setUploading(false);
     }
@@ -62,8 +62,8 @@ export default function CaseDetailPage() {
     try {
       const res = await api.runFusion(id);
       setFusion(res.data);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Fusion failed');
     } finally {
       setFusionLoading(false);
     }
@@ -73,8 +73,8 @@ export default function CaseDetailPage() {
     try {
       const res = await api.generateReport(id, type);
       alert(`Report generated: ${res.data.id}`);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Report generation failed');
     }
   };
 

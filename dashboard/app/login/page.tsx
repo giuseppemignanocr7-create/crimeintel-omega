@@ -19,8 +19,8 @@ export default function LoginPage() {
     try {
       await api.login(email, password);
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -32,8 +32,8 @@ export default function LoginPage() {
     try {
       await api.demoLogin();
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Demo login failed');
     } finally {
       setDemoLoading(false);
     }

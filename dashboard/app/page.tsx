@@ -8,7 +8,9 @@ import { NavShell } from '@/components/NavShell';
 
 export default function HomePage() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [stats, setStats] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [cases, setCases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,8 +28,8 @@ export default function HomePage() {
   }
 
   const analytics = DEMO_ANALYTICS;
-  const criticalCases = cases.filter((c: any) => c.priority === 'CRITICAL' && c.status !== 'CLOSED').slice(0, 5);
-  const recentCases = [...cases].sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5);
+  const criticalCases = cases.filter(c => c.priority === 'CRITICAL' && c.status !== 'CLOSED').slice(0, 5);
+  const recentCases = [...cases].sort((a, b) => new Date(b.updatedAt as string).getTime() - new Date(a.updatedAt as string).getTime()).slice(0, 5);
 
   const statCards = [
     { label: 'Casi Totali', value: stats?.total || 0, color: 'text-ci-accent', icon: '📁' },
@@ -41,7 +43,7 @@ export default function HomePage() {
   const statusColor: Record<string, string> = { ACTIVE: 'text-ci-success', OPEN: 'text-ci-warning', PENDING_REVIEW: 'text-purple-400', CLOSED: 'text-ci-muted' };
   const activityIcon: Record<string, string> = { fusion: '🧠', evidence: '📎', case: '📂', report: '📄', ai: '🤖', verify: '✅', user: '👤' };
 
-  const maxBar = Math.max(...analytics.casesPerMonth.map((m: any) => m.count));
+  const maxBar = Math.max(...analytics.casesPerMonth.map(m => m.count));
 
   return (
     <NavShell current="/">
@@ -74,7 +76,7 @@ export default function HomePage() {
           <div className="lg:col-span-2 bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm md:text-base font-semibold mb-4">Casi per Mese</h2>
             <div className="flex items-end gap-2 md:gap-4 h-32 md:h-40">
-              {analytics.casesPerMonth.map((m: any) => (
+              {analytics.casesPerMonth.map(m => (
                 <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
                   <span className="text-xs text-ci-accent font-medium">{m.count}</span>
                   <div className="w-full bg-ci-accent/20 rounded-t relative" style={{ height: `${(m.count / maxBar) * 100}%` }}>
@@ -118,7 +120,7 @@ export default function HomePage() {
               <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">{criticalCases.length}</span>
             </div>
             <div className="space-y-2">
-              {criticalCases.map((c: any) => (
+              {criticalCases.map(c => (
                 <button key={c.id} onClick={() => router.push(`/cases/${c.id}`)}
                   className="w-full text-left p-3 bg-ci-bg rounded border border-ci-border hover:border-red-500/50 active:bg-ci-border/30 transition">
                   <div className="flex items-center gap-2">
@@ -137,7 +139,7 @@ export default function HomePage() {
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm md:text-base font-semibold mb-3 md:mb-4">Attività Recenti</h2>
             <div className="space-y-2.5">
-              {analytics.recentActivity.map((a: any, i: number) => (
+              {analytics.recentActivity.map((a, i) => (
                 <div key={i} className="flex gap-3 items-start">
                   <span className="text-base flex-shrink-0 mt-0.5">{activityIcon[a.type] || '📌'}</span>
                   <div className="min-w-0">
@@ -155,7 +157,7 @@ export default function HomePage() {
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm md:text-base font-semibold mb-4">Per Priorità</h2>
             <div className="space-y-3">
-              {analytics.casesByPriority.map((p: any) => (
+              {analytics.casesByPriority.map(p => (
                 <div key={p.priority} className="flex items-center gap-3">
                   <span className={`w-3 h-3 rounded-full flex-shrink-0 ${priorityColor[p.priority]}`} />
                   <span className="text-sm flex-1">{p.priority}</span>
@@ -169,7 +171,7 @@ export default function HomePage() {
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm md:text-base font-semibold mb-4">Per Status</h2>
             <div className="space-y-3">
-              {analytics.casesByStatus.map((s: any) => (
+              {analytics.casesByStatus.map(s => (
                 <div key={s.status} className="flex items-center gap-3">
                   <span className={`text-sm flex-1 ${statusColor[s.status] || ''}`}>{s.status}</span>
                   <span className="text-sm font-bold">{s.count}</span>
@@ -182,7 +184,7 @@ export default function HomePage() {
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm md:text-base font-semibold mb-4">Prove per Tipo</h2>
             <div className="space-y-3">
-              {analytics.evidencePerType.map((e: any) => {
+              {analytics.evidencePerType.map(e => {
                 const icons: Record<string, string> = { IMAGE: '🖼️', VIDEO: '🎥', DOCUMENT: '📄', AUDIO: '🎵', PLATE: '🚗' };
                 return (
                   <div key={e.type} className="flex items-center gap-3">
@@ -214,7 +216,7 @@ export default function HomePage() {
                 </tr>
               </thead>
               <tbody>
-                {recentCases.map((c: any) => (
+                {recentCases.map(c => (
                   <tr key={c.id} onClick={() => router.push(`/cases/${c.id}`)} className="border-b border-ci-border/50 hover:bg-ci-bg/50 cursor-pointer transition">
                     <td className="py-2.5 pr-4 font-mono text-xs text-ci-muted">{c.caseNumber}</td>
                     <td className="py-2.5 pr-4 font-medium truncate max-w-[200px]">{c.title}</td>

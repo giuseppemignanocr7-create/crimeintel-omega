@@ -2,6 +2,10 @@ import {
   DEMO_USER, DEMO_TOKEN, DEMO_CASES, DEMO_STATS,
   getDemoCase, getDemoEvidence, DEMO_FUSION, demoSearch,
 } from './mock-data';
+import type { Profile, Case, CaseWithCounts, Evidence, FusionResult, SearchResults, CaseStats, PaginatedResponse } from './types';
+
+interface AuthResponse { user: Profile; token: string }
+interface ApiResponse<T> { data: T }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
 
@@ -76,7 +80,7 @@ class ApiClient {
 
   // Auth
   async login(email: string, password: string) {
-    const data = await this.request<{ data: { user: any; token: string } }>('/auth/login', {
+    const data = await this.request<ApiResponse<AuthResponse>>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -86,7 +90,7 @@ class ApiClient {
   }
 
   async register(email: string, password: string, name?: string) {
-    const data = await this.request<{ data: { user: any; token: string } }>('/auth/register', {
+    const data = await this.request<ApiResponse<AuthResponse>>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password, name }),
     });
@@ -98,7 +102,7 @@ class ApiClient {
   async demoLogin() {
     // Try real backend first, fallback to offline demo
     try {
-      const data = await this.request<{ data: { user: any; token: string } }>('/auth/demo', {
+      const data = await this.request<ApiResponse<AuthResponse>>('/auth/demo', {
         method: 'POST',
       });
       this.setDemo(false);
@@ -133,7 +137,7 @@ class ApiClient {
       return { data: { items: paged, pagination: { page, limit, total: items.length, totalPages: Math.ceil(items.length / limit) } } };
     }
     const query = params ? '?' + new URLSearchParams(params).toString() : '';
-    return this.request<{ data: any }>(`/cases${query}`);
+    return this.request<ApiResponse<PaginatedResponse<CaseWithCounts>>>(`/cases${query}`);
   }
 
   async getCase(id: string) {
@@ -142,10 +146,10 @@ class ApiClient {
       if (!c) throw new Error('Case not found');
       return { data: c };
     }
-    return this.request<{ data: any }>(`/cases/${id}`);
+    return this.request<ApiResponse<Case>>(`/cases/${id}`);
   }
 
-  async createCase(data: any) {
+  async createCase(data: { title: string; description?: string; priority?: string }) {
     if (this.isDemo) {
       const num = DEMO_CASES.length + 1;
       const newCase = {
@@ -165,19 +169,19 @@ class ApiClient {
       DEMO_CASES.unshift(newCase);
       return { data: newCase };
     }
-    return this.request<{ data: any }>('/cases', {
+    return this.request<ApiResponse<Case>>('/cases', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateCase(id: string, data: any) {
+  async updateCase(id: string, data: Partial<Case>) {
     if (this.isDemo) {
       const c = DEMO_CASES.find(x => x.id === id);
       if (c) Object.assign(c, data, { updatedAt: new Date().toISOString() });
       return { data: c };
     }
-    return this.request<{ data: any }>(`/cases/${id}`, {
+    return this.request<ApiResponse<Case>>(`/cases/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -189,14 +193,14 @@ class ApiClient {
       if (idx >= 0) DEMO_CASES.splice(idx, 1);
       return { data: { message: 'Case deleted' } };
     }
-    return this.request<{ data: any }>(`/cases/${id}`, { method: 'DELETE' });
+    return this.request<ApiResponse<{ message: string }>>(`/cases/${id}`, { method: 'DELETE' });
   }
 
   async getCaseStats() {
     if (this.isDemo) {
       return { data: DEMO_STATS };
     }
-    return this.request<{ data: any }>('/cases/stats');
+    return this.request<ApiResponse<CaseStats>>('/cases/stats');
   }
 
   // Evidence
@@ -232,28 +236,28 @@ class ApiClient {
 
   async getEvidence(caseId: string) {
     if (this.isDemo) return { data: getDemoEvidence(caseId) };
-    return this.request<{ data: any }>(`/evidence/case/${caseId}`);
+    return this.request<ApiResponse<Evidence[]>>(`/evidence/case/${caseId}`);
   }
 
   async getEvidenceDetail(id: string) {
-    if (this.isDemo) return { data: { id, fileName: 'evidence.file', type: 'DOCUMENT', aiStatus: 'COMPLETED' } };
-    return this.request<{ data: any }>(`/evidence/${id}`);
+    if (this.isDemo) return { data: { id, fileName: 'evidence.file', type: 'DOCUMENT' as const, aiStatus: 'COMPLETED' as const } };
+    return this.request<ApiResponse<Evidence>>(`/evidence/${id}`);
   }
 
   async verifyEvidence(id: string) {
     if (this.isDemo) return { data: { verified: true, hash: `sha256-verified-${id}` } };
-    return this.request<{ data: any }>(`/evidence/${id}/verify`);
+    return this.request<ApiResponse<{ verified: boolean; hash: string }>>(`/evidence/${id}/verify`);
   }
 
   // HyperFusion
   async runFusion(caseId: string) {
     if (this.isDemo) return { data: DEMO_FUSION(caseId) };
-    return this.request<{ data: any }>(`/hyperfusion/${caseId}/run`, { method: 'POST' });
+    return this.request<ApiResponse<FusionResult>>(`/hyperfusion/${caseId}/run`, { method: 'POST' });
   }
 
   async getFusion(caseId: string) {
     if (this.isDemo) return { data: DEMO_FUSION(caseId) };
-    return this.request<{ data: any }>(`/hyperfusion/${caseId}`);
+    return this.request<ApiResponse<FusionResult>>(`/hyperfusion/${caseId}`);
   }
 
   // NeuroSearch
@@ -262,7 +266,7 @@ class ApiClient {
     const params = new URLSearchParams({ q: query });
     if (filters?.caseId) params.set('caseId', filters.caseId);
     if (filters?.type) params.set('type', filters.type);
-    return this.request<{ data: any }>(`/neurosearch?${params}`);
+    return this.request<ApiResponse<SearchResults>>(`/neurosearch?${params}`);
   }
 
   // Reports
@@ -271,7 +275,7 @@ class ApiClient {
       return { data: { id: `rep-demo-${Date.now()}`, type: type || 'SUMMARY', caseId, createdAt: new Date().toISOString() } };
     }
     const query = type ? `?type=${type}` : '';
-    return this.request<{ data: any }>(`/reports/${caseId}/generate${query}`, { method: 'POST' });
+    return this.request<ApiResponse<{ id: string; type: string; caseId: string; createdAt: string }>>(`/reports/${caseId}/generate${query}`, { method: 'POST' });
   }
 
   async getReports(caseId: string) {
@@ -280,13 +284,13 @@ class ApiClient {
         { id: `rep-${caseId}-1`, type: 'SUMMARY', caseId, createdAt: new Date().toISOString() },
       ]};
     }
-    return this.request<{ data: any }>(`/reports/case/${caseId}`);
+    return this.request<ApiResponse<{ id: string; type: string; caseId: string; createdAt: string }[]>>(`/reports/case/${caseId}`);
   }
 
   // Health
   async health() {
     if (this.isDemo) return { data: { status: 'ok', mode: 'demo-offline' } };
-    return this.request<{ data: any }>('/health');
+    return this.request<ApiResponse<{ status: string; mode: string }>>('/health');
   }
 }
 

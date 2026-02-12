@@ -165,7 +165,20 @@ export const DEMO_CASES = [
   },
 ];
 
-const makeEvidence = (caseId: string, items: { name: string; type: string; size: number; ai: string }[]) =>
+interface DemoEvidence {
+  id: string;
+  caseId: string;
+  type: string;
+  fileName: string;
+  fileSize: number;
+  hash: string;
+  aiStatus: string;
+  aiResults: { objects: string[]; confidence: number; labels: string[] } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const makeEvidence = (caseId: string, items: { name: string; type: string; size: number; ai: string }[]): DemoEvidence[] =>
   items.map((e, i) => ({
     id: `${caseId}-ev${i}`,
     caseId,
@@ -179,7 +192,7 @@ const makeEvidence = (caseId: string, items: { name: string; type: string; size:
     updatedAt: daysAgo(0),
   }));
 
-export const DEMO_EVIDENCE: Record<string, any[]> = {
+export const DEMO_EVIDENCE: Record<string, DemoEvidence[]> = {
   c001: makeEvidence('c001', [
     { name: 'CCTV_ViaRoma_cam3.mp4', type: 'VIDEO', size: 245000000, ai: 'COMPLETED' },
     { name: 'foto_gioielleria_01.jpg', type: 'IMAGE', size: 4500000, ai: 'COMPLETED' },
@@ -222,7 +235,7 @@ const defaultEvidence = (caseId: string, count: number) =>
     ai: Math.random() > 0.2 ? 'COMPLETED' : 'PROCESSING',
   })));
 
-export function getDemoEvidence(caseId: string): any[] {
+export function getDemoEvidence(caseId: string): DemoEvidence[] {
   if (DEMO_EVIDENCE[caseId]) return DEMO_EVIDENCE[caseId];
   const c = DEMO_CASES.find(x => x.id === caseId);
   const count = c?._count?.evidence || 3;

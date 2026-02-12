@@ -8,6 +8,7 @@ import { NavShell } from '@/components/NavShell';
 export default function SearchPage() {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,8 +18,8 @@ export default function SearchPage() {
     try {
       const res = await api.search(query);
       setResults(res.data);
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Search failed');
     } finally {
       setLoading(false);
     }
@@ -60,6 +61,7 @@ export default function SearchPage() {
               <div className="mb-5 md:mb-6">
                 <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Cases ({results.results.cases.length})</h2>
                 <div className="space-y-2">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {results.results.cases.map((c: any) => (
                     <div
                       key={c.id}
@@ -83,6 +85,7 @@ export default function SearchPage() {
               <div>
                 <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Evidence ({results.results.evidence.length})</h2>
                 <div className="space-y-2">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {results.results.evidence.map((ev: any) => (
                     <div key={ev.id} className="bg-ci-card border border-ci-border rounded-lg p-3 md:p-4">
                       <div className="flex items-start justify-between gap-2">

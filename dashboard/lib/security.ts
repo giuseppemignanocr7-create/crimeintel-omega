@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js';
-import type { UserRole, Permission, ROLE_PERMISSIONS as RolePermsType } from './types';
+import type { UserRole, Permission } from './types';
 
 // ============================================================
 // CRIMEINTEL 7.0 Ω — SECURITY ENGINE

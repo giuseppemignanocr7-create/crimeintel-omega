@@ -91,7 +91,7 @@ export function CrimeMind() {
     if (q === '/analytics' || q.includes('report analytics') || q.includes('statistiche') || q.includes('analytics')) {
       const a = DEMO_ANALYTICS;
       simulateTyping(() => {
-        addMsg('ai', `📊 **Report Analytics Rapido:**\n\n• Casi totali: **${a.casesByStatus.reduce((s: number, x: any) => s + x.count, 0)}**\n• Prove totali: **${a.evidencePerType.reduce((s: number, x: any) => s + x.count, 0)}**\n• AI completate: **${a.aiProcessing.completed}**\n• AI in elaborazione: **${a.aiProcessing.processing}**\n• Errori AI: **${a.aiProcessing.failed}**`,
+        addMsg('ai', `📊 **Report Analytics Rapido:**\n\n• Casi totali: **${a.casesByStatus.reduce((s: number, x: { count: number }) => s + x.count, 0)}**\n• Prove totali: **${a.evidencePerType.reduce((s: number, x: { count: number }) => s + x.count, 0)}**\n• AI completate: **${a.aiProcessing.completed}**\n• AI in elaborazione: **${a.aiProcessing.processing}**\n• Errori AI: **${a.aiProcessing.failed}**`,
           [{ label: 'Vai ad Analytics', action: () => router.push('/analytics') }]
         );
       });

@@ -31,8 +31,8 @@ export default function RegisterPage() {
     try {
       await api.register(email, password, name || undefined);
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Registrazione fallita');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registrazione fallita');
     } finally {
       setLoading(false);
     }
@@ -44,8 +44,8 @@ export default function RegisterPage() {
     try {
       await api.demoLogin();
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Demo login failed');
     } finally {
       setDemoLoading(false);
     }
