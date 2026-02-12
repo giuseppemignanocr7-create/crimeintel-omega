@@ -282,6 +282,70 @@ export function getDemoCase(id: string) {
   };
 }
 
+export const DEMO_AUDIT_LOG = [
+  { id: 'al01', userId: 'demo-user-001', action: 'USER_LOGIN', resource: 'auth', targetId: null, details: null, createdAt: daysAgo(0), user: { name: 'Ospite Demo', email: 'demo@crimeintel.com' } },
+  { id: 'al02', userId: 'u002', action: 'CASE_CREATED', resource: 'case', targetId: 'c023', details: { title: 'Scomparsa Minore - Caso Ferrara' }, createdAt: daysAgo(0), user: { name: 'Marco Verdi', email: 'marco.verdi@crimeintel.com' } },
+  { id: 'al03', userId: 'u003', action: 'EVIDENCE_UPLOADED', resource: 'evidence', targetId: 'c004-ev3', details: { fileName: 'CCTV_viale_nord.mp4', type: 'VIDEO' }, createdAt: daysAgo(0), user: { name: 'Sara Neri', email: 'sara.neri@crimeintel.com' } },
+  { id: 'al04', userId: 'u001', action: 'FUSION_COMPLETED', resource: 'hyperfusion', targetId: 'c013', details: { fusionScore: 0.91 }, createdAt: daysAgo(0), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+  { id: 'al05', userId: 'u004', action: 'REPORT_GENERATED', resource: 'report', targetId: 'c003', details: { type: 'FORENSIC' }, createdAt: daysAgo(1), user: { name: 'Luca Bianchi', email: 'luca.bianchi@crimeintel.com' } },
+  { id: 'al06', userId: 'u002', action: 'CASE_UPDATED', resource: 'case', targetId: 'c010', details: { status: 'ACTIVE', priority: 'CRITICAL' }, createdAt: daysAgo(1), user: { name: 'Marco Verdi', email: 'marco.verdi@crimeintel.com' } },
+  { id: 'al07', userId: 'u003', action: 'EVIDENCE_UPLOADED', resource: 'evidence', targetId: 'c020-ev5', details: { fileName: 'dark_web_screenshot.png', type: 'IMAGE' }, createdAt: daysAgo(1), user: { name: 'Sara Neri', email: 'sara.neri@crimeintel.com' } },
+  { id: 'al08', userId: 'u001', action: 'EVIDENCE_VERIFIED', resource: 'evidence', targetId: 'c001-ev0', details: { hash: 'sha256-c0010abcdef', verified: true }, createdAt: daysAgo(1), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+  { id: 'al09', userId: 'u005', action: 'USER_LOGIN', resource: 'auth', targetId: null, details: null, createdAt: daysAgo(2), user: { name: 'Elena Rossi', email: 'elena.rossi@crimeintel.com' } },
+  { id: 'al10', userId: 'u001', action: 'CASE_CREATED', resource: 'case', targetId: 'c021', details: { title: 'Rapina Portavalori Autostrada A1' }, createdAt: daysAgo(2), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+  { id: 'al11', userId: 'u004', action: 'FUSION_COMPLETED', resource: 'hyperfusion', targetId: 'c007', details: { fusionScore: 0.85 }, createdAt: daysAgo(2), user: { name: 'Luca Bianchi', email: 'luca.bianchi@crimeintel.com' } },
+  { id: 'al12', userId: 'u002', action: 'EVIDENCE_UPLOADED', resource: 'evidence', targetId: 'c015-ev2', details: { fileName: 'intercettazione_audio.wav', type: 'AUDIO' }, createdAt: daysAgo(3), user: { name: 'Marco Verdi', email: 'marco.verdi@crimeintel.com' } },
+  { id: 'al13', userId: 'u003', action: 'REPORT_GENERATED', resource: 'report', targetId: 'c004', details: { type: 'SUMMARY' }, createdAt: daysAgo(3), user: { name: 'Sara Neri', email: 'sara.neri@crimeintel.com' } },
+  { id: 'al14', userId: 'u001', action: 'CASE_UPDATED', resource: 'case', targetId: 'c009', details: { status: 'CLOSED' }, createdAt: daysAgo(4), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+  { id: 'al15', userId: 'u005', action: 'LOGIN_FAILED', resource: 'auth', targetId: null, details: { email: 'unknown@test.com' }, createdAt: daysAgo(4), user: { name: 'Sistema', email: 'system' } },
+  { id: 'al16', userId: 'u004', action: 'EVIDENCE_UPLOADED', resource: 'evidence', targetId: 'c022-ev1', details: { fileName: 'contratto_appalto.pdf', type: 'DOCUMENT' }, createdAt: daysAgo(5), user: { name: 'Luca Bianchi', email: 'luca.bianchi@crimeintel.com' } },
+  { id: 'al17', userId: 'u001', action: 'CASE_CREATED', resource: 'case', targetId: 'c020', details: { title: 'Pedopornografia Online - Op. Dark Shield' }, createdAt: daysAgo(5), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+  { id: 'al18', userId: 'u002', action: 'FUSION_COMPLETED', resource: 'hyperfusion', targetId: 'c001', details: { fusionScore: 0.78 }, createdAt: daysAgo(6), user: { name: 'Marco Verdi', email: 'marco.verdi@crimeintel.com' } },
+  { id: 'al19', userId: 'u003', action: 'CASE_UPDATED', resource: 'case', targetId: 'c012', details: { status: 'CLOSED' }, createdAt: daysAgo(7), user: { name: 'Sara Neri', email: 'sara.neri@crimeintel.com' } },
+  { id: 'al20', userId: 'u001', action: 'USER_REGISTERED', resource: 'user', targetId: 'u005', details: { email: 'elena.rossi@crimeintel.com' }, createdAt: daysAgo(10), user: { name: 'Admin CrimeIntel', email: 'admin@crimeintel.com' } },
+];
+
+export const DEMO_USERS = [
+  { id: 'u001', email: 'admin@crimeintel.com', name: 'Admin CrimeIntel', role: 'ADMIN', isActive: true, lastLogin: daysAgo(0), createdAt: daysAgo(90) },
+  { id: 'u002', email: 'marco.verdi@crimeintel.com', name: 'Marco Verdi', role: 'SUPERVISOR', isActive: true, lastLogin: daysAgo(0), createdAt: daysAgo(60) },
+  { id: 'u003', email: 'sara.neri@crimeintel.com', name: 'Sara Neri', role: 'INVESTIGATOR', isActive: true, lastLogin: daysAgo(1), createdAt: daysAgo(45) },
+  { id: 'u004', email: 'luca.bianchi@crimeintel.com', name: 'Luca Bianchi', role: 'ANALYST', isActive: true, lastLogin: daysAgo(2), createdAt: daysAgo(30) },
+  { id: 'u005', email: 'elena.rossi@crimeintel.com', name: 'Elena Rossi', role: 'INVESTIGATOR', isActive: true, lastLogin: daysAgo(2), createdAt: daysAgo(10) },
+  { id: 'u006', email: 'paolo.ferrari@crimeintel.com', name: 'Paolo Ferrari', role: 'VIEWER', isActive: true, lastLogin: daysAgo(5), createdAt: daysAgo(20) },
+  { id: 'u007', email: 'giulia.moretti@crimeintel.com', name: 'Giulia Moretti', role: 'ANALYST', isActive: false, lastLogin: daysAgo(30), createdAt: daysAgo(80) },
+  { id: 'demo-user-001', email: 'demo@crimeintel.com', name: 'Ospite Demo', role: 'ADMIN', isActive: true, lastLogin: daysAgo(0), createdAt: daysAgo(0) },
+];
+
+export const DEMO_ANALYTICS = {
+  casesPerMonth: [
+    { month: 'Set', count: 3 }, { month: 'Ott', count: 5 }, { month: 'Nov', count: 4 },
+    { month: 'Dic', count: 7 }, { month: 'Gen', count: 8 }, { month: 'Feb', count: 6 },
+  ],
+  evidencePerType: [
+    { type: 'IMAGE', count: 48 }, { type: 'VIDEO', count: 32 }, { type: 'DOCUMENT', count: 45 },
+    { type: 'AUDIO', count: 18 }, { type: 'PLATE', count: 13 },
+  ],
+  casesByStatus: [
+    { status: 'ACTIVE', count: 16 }, { status: 'OPEN', count: 3 }, { status: 'CLOSED', count: 3 },
+    { status: 'PENDING_REVIEW', count: 3 },
+  ],
+  casesByPriority: [
+    { priority: 'CRITICAL', count: 9 }, { priority: 'HIGH', count: 9 },
+    { priority: 'MEDIUM', count: 5 }, { priority: 'LOW', count: 2 },
+  ],
+  aiProcessing: { completed: 132, processing: 12, pending: 8, failed: 4 },
+  recentActivity: [
+    { time: daysAgo(0), event: 'HyperFusion completata su caso CI-2026-0013', type: 'fusion' },
+    { time: daysAgo(0), event: 'Nuova prova caricata: CCTV_viale_nord.mp4', type: 'evidence' },
+    { time: daysAgo(0), event: 'Caso CI-2026-0023 creato — Scomparsa Minore', type: 'case' },
+    { time: daysAgo(0), event: 'Report FORENSIC generato per CI-2026-0003', type: 'report' },
+    { time: daysAgo(1), event: 'AI analisi completata su 5 prove del caso CI-2026-0020', type: 'ai' },
+    { time: daysAgo(1), event: 'Integrità verificata: evidence c001-ev0 ✓', type: 'verify' },
+    { time: daysAgo(1), event: 'Caso CI-2026-0010 aggiornato a CRITICAL', type: 'case' },
+    { time: daysAgo(2), event: 'Nuovo utente registrato: Elena Rossi', type: 'user' },
+  ],
+};
+
 export function demoSearch(query: string) {
   const q = query.toLowerCase();
   const cases = DEMO_CASES.filter(c =>

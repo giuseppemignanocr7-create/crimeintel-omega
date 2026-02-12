@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { NavShell } from '@/components/NavShell';
 
 export default function SearchPage() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -25,39 +25,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh]">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-ci-border bg-ci-card/95 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-3">
-          <button onClick={() => router.push('/')} className="text-xl md:text-2xl font-bold text-ci-accent">CrimeIntel</button>
-          <span className="text-[10px] md:text-xs bg-purple-500/20 text-purple-400 px-1.5 md:px-2 py-0.5 rounded">NeuroSearch</span>
-        </div>
-        <div className="hidden md:flex items-center gap-4">
-          <button onClick={() => router.push('/cases')} className="text-ci-muted hover:text-ci-text transition">Cases</button>
-          <button onClick={() => { api.clearToken(); router.push('/login'); }} className="text-ci-danger text-sm">Logout</button>
-        </div>
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex flex-col gap-1.5 p-2 -mr-2" aria-label="Menu">
-          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-ci-text transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-        </button>
-      </nav>
-
-      {menuOpen && (
-        <div className="md:hidden fixed inset-0 z-40" onClick={() => setMenuOpen(false)}>
-          <div className="mobile-overlay absolute inset-0 bg-black/60" />
-          <div className="mobile-menu absolute right-0 top-0 h-full w-64 bg-ci-card border-l border-ci-border pt-16 px-6">
-            <div className="space-y-1">
-              <button onClick={() => { router.push('/'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">Command Center</button>
-              <button onClick={() => { router.push('/cases'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">Cases</button>
-              <button onClick={() => { router.push('/search'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-accent font-medium bg-ci-accent/10">NeuroSearch</button>
-              <hr className="border-ci-border my-3" />
-              <button onClick={() => { api.clearToken(); router.push('/login'); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-danger hover:bg-red-500/10 transition">Logout</button>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <NavShell current="/search">
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-5 md:py-8">
         <h1 className="text-xl md:text-2xl font-bold mb-1 md:mb-2">NeuroSearch</h1>
         <p className="text-ci-muted text-xs md:text-sm mb-4 md:mb-6">Search across all evidence, AI results, cases, and metadata</p>
@@ -164,6 +132,6 @@ export default function SearchPage() {
           </div>
         )}
       </main>
-    </div>
+    </NavShell>
   );
 }

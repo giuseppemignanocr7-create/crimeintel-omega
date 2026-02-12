@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { NavShell } from '@/components/NavShell';
 
 export default function CasesPage() {
   const router = useRouter();
@@ -13,13 +14,16 @@ export default function CasesPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('');
 
   const fetchCases = async (page = 1) => {
     setLoading(true);
     try {
       const params: Record<string, string> = { page: String(page) };
       if (search) params.search = search;
+      if (statusFilter) params.status = statusFilter;
+      if (priorityFilter) params.priority = priorityFilter;
       const res = await api.getCases(params);
       setCases(res.data.items || []);
       setPagination(res.data.pagination);
@@ -61,57 +65,43 @@ export default function CasesPage() {
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh]">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-ci-border bg-ci-card/95 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-3">
-          <button onClick={() => router.push('/')} className="text-xl md:text-2xl font-bold text-ci-accent">CrimeIntel</button>
-          <span className="text-[10px] md:text-xs bg-ci-accent/20 text-ci-accent px-1.5 md:px-2 py-0.5 rounded">7.0 Ω</span>
-        </div>
-        <div className="hidden md:flex items-center gap-4">
-          <button onClick={() => router.push('/search')} className="text-ci-muted hover:text-ci-text transition">NeuroSearch</button>
-          <button onClick={() => { api.clearToken(); router.push('/login'); }} className="text-ci-danger hover:text-red-300 transition text-sm">Logout</button>
-        </div>
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex flex-col gap-1.5 p-2 -mr-2" aria-label="Menu">
-          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-ci-text transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-ci-text transition-transform ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-        </button>
-      </nav>
-
-      {menuOpen && (
-        <div className="md:hidden fixed inset-0 z-40" onClick={() => setMenuOpen(false)}>
-          <div className="mobile-overlay absolute inset-0 bg-black/60" />
-          <div className="mobile-menu absolute right-0 top-0 h-full w-64 bg-ci-card border-l border-ci-border pt-16 px-6">
-            <div className="space-y-1">
-              <button onClick={() => { router.push('/'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">Command Center</button>
-              <button onClick={() => { router.push('/cases'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-accent font-medium bg-ci-accent/10">Cases</button>
-              <button onClick={() => { router.push('/search'); setMenuOpen(false); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-text hover:bg-ci-border/50 transition">NeuroSearch</button>
-              <hr className="border-ci-border my-3" />
-              <button onClick={() => { api.clearToken(); router.push('/login'); }} className="w-full text-left py-3 px-4 rounded-lg text-ci-danger hover:bg-red-500/10 transition">Logout</button>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <NavShell current="/cases">
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">
         <div className="flex items-center justify-between mb-4 md:mb-6">
-          <h1 className="text-xl md:text-2xl font-bold">Cases</h1>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold">Gestione Casi</h1>
+            <p className="text-ci-muted text-xs mt-0.5">{pagination?.total || cases.length} casi totali</p>
+          </div>
           <button onClick={() => setShowCreate(true)} className="px-3 md:px-4 py-2 bg-ci-accent hover:bg-ci-accent-hover active:bg-blue-700 text-white rounded transition text-sm font-medium">
-            + New Case
+            + Nuovo Caso
           </button>
         </div>
 
-        <div className="mb-4 md:mb-6 flex gap-2">
+        {/* Filters */}
+        <div className="mb-4 md:mb-6 flex flex-col sm:flex-row gap-2">
           <input
             type="text"
-            placeholder="Search cases..."
+            placeholder="Cerca casi per titolo, numero, descrizione..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && fetchCases()}
-            className="flex-1 px-3 md:px-4 py-2.5 bg-ci-card border border-ci-border rounded focus:border-ci-accent focus:outline-none text-ci-text"
+            className="flex-1 px-3 md:px-4 py-2.5 bg-ci-card border border-ci-border rounded focus:border-ci-accent focus:outline-none text-ci-text text-sm"
           />
-          <button onClick={() => fetchCases()} className="px-3 md:px-4 py-2.5 bg-ci-card border border-ci-border rounded hover:bg-ci-border active:bg-gray-600 transition">Search</button>
+          <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); }} className="px-3 py-2.5 bg-ci-card border border-ci-border rounded text-ci-text text-sm focus:border-ci-accent focus:outline-none">
+            <option value="">Tutti gli status</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="OPEN">OPEN</option>
+            <option value="PENDING_REVIEW">PENDING_REVIEW</option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+          <select value={priorityFilter} onChange={e => { setPriorityFilter(e.target.value); }} className="px-3 py-2.5 bg-ci-card border border-ci-border rounded text-ci-text text-sm focus:border-ci-accent focus:outline-none">
+            <option value="">Tutte le priorità</option>
+            <option value="CRITICAL">CRITICAL</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
+          </select>
+          <button onClick={() => fetchCases()} className="px-4 py-2.5 bg-ci-card border border-ci-border rounded hover:bg-ci-border active:bg-gray-600 transition text-sm">Cerca</button>
         </div>
 
         {showCreate && (
@@ -187,6 +177,6 @@ export default function CasesPage() {
           </div>
         )}
       </main>
-    </div>
+    </NavShell>
   );
 }
