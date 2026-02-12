@@ -27,6 +27,7 @@ const NAV_SECTIONS = [
     title: 'Documentazione',
     items: [
       { href: '/reports', label: 'Report Center', icon: '📄' },
+      { href: '/competitors', label: 'Competitive Intel', icon: '⚔️' },
     ],
   },
   {
