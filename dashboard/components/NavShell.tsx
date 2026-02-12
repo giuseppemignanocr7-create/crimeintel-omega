@@ -36,6 +36,7 @@ const NAV_SECTIONS = [
       { href: '/audit', label: 'Audit Log', icon: '📋' },
       { href: '/users', label: 'Gestione Utenti', icon: '👥' },
       { href: '/settings', label: 'Sistema & Sicurezza', icon: '🔐' },
+      { href: '/security-dashboard', label: 'Security Center', icon: '🛡️' },
     ],
   },
 ];
