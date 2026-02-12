@@ -346,6 +346,213 @@ export const DEMO_ANALYTICS = {
   ],
 };
 
+// ── AI Engine Modules ──
+export const DEMO_AI_ENGINE = {
+  modules: [
+    {
+      id: 'yolov8', name: 'Object Detection', engine: 'YOLOv8-X', version: '8.1.47',
+      status: 'ONLINE', accuracy: 0.89, avgInference: 12.4, fps: 80, gpuUsage: 67,
+      totalProcessed: 14820, todayProcessed: 342,
+      classes: ['Armi', 'Veicoli', 'Persone', 'Borse/Zaini', 'Coltelli', 'Telefoni', 'Maschere'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c001', type: 'Arma da fuoco', confidence: 0.94, image: 'frame_0042.jpg' },
+        { time: daysAgo(0), caseId: 'c004', type: 'Veicolo sospetto', confidence: 0.88, image: 'cctv_nord_f12.jpg' },
+        { time: daysAgo(0), caseId: 'c013', type: 'Persona mascherata', confidence: 0.91, image: 'cam3_f087.jpg' },
+        { time: daysAgo(1), caseId: 'c003', type: 'Laptop', confidence: 0.86, image: 'seq_a_f201.jpg' },
+        { time: daysAgo(1), caseId: 'c007', type: 'Coltello', confidence: 0.92, image: 'frame_0105.jpg' },
+      ],
+    },
+    {
+      id: 'facerec', name: 'Face Recognition', engine: 'ONNX ArcFace', version: '2.4.1',
+      status: 'ONLINE', accuracy: 0.9928, avgInference: 3.8, fps: 263, gpuUsage: 45,
+      totalProcessed: 8940, todayProcessed: 198,
+      classes: ['Embedding 512D', 'Cosine Similarity', 'Age Estimation', 'Gender Detection'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c001', type: 'Match: Soggetto Alpha (92.4%)', confidence: 0.924, image: 'face_crop_01.jpg' },
+        { time: daysAgo(0), caseId: 'c010', type: 'Match: Soggetto Beta (88.1%)', confidence: 0.881, image: 'face_crop_14.jpg' },
+        { time: daysAgo(1), caseId: 'c013', type: 'Volto parziale rilevato', confidence: 0.67, image: 'face_partial_03.jpg' },
+      ],
+    },
+    {
+      id: 'lpr', name: 'License Plate Recognition', engine: 'Tesseract + EasyOCR', version: '5.3.0',
+      status: 'ONLINE', accuracy: 0.947, avgInference: 13.4, fps: 74, gpuUsage: 32,
+      totalProcessed: 5670, todayProcessed: 87,
+      classes: ['Formato IT', 'Formato EU', 'Formato US', 'Error Correction'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c002', type: 'Targa: FI 482 KL', confidence: 0.96, image: 'plate_crop_01.jpg' },
+        { time: daysAgo(0), caseId: 'c004', type: 'Targa: MI 923 AB', confidence: 0.91, image: 'plate_crop_07.jpg' },
+        { time: daysAgo(1), caseId: 'c014', type: 'Targa: NA 110 ZZ', confidence: 0.88, image: 'plate_crop_12.jpg' },
+      ],
+    },
+    {
+      id: 'thermal', name: 'Thermal Analysis', engine: 'ThermoVision AI', version: '1.8.2',
+      status: 'ONLINE', accuracy: 0.91, avgInference: 1.2, fps: 833, gpuUsage: 18,
+      totalProcessed: 3210, todayProcessed: 45,
+      classes: ['Hotspot Detection', 'Body Heat (36-39°C)', 'Temperature Mapping', 'Heatmap Gen'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c017', type: 'Corpo caldo rilevato (37.2°C)', confidence: 0.95, image: 'thermal_01.jpg' },
+        { time: daysAgo(1), caseId: 'c008', type: 'Hotspot anomalo (62°C)', confidence: 0.89, image: 'thermal_05.jpg' },
+      ],
+    },
+    {
+      id: 'satellite', name: 'Satellite/Drone Analysis', engine: 'GeoVision AI', version: '3.2.0',
+      status: 'ONLINE', accuracy: 0.87, avgInference: 45.2, fps: 22, gpuUsage: 78,
+      totalProcessed: 1890, todayProcessed: 23,
+      classes: ['Strutture', 'Veicoli', 'Cambiamento Terreno', 'Percorsi', 'Anomalie'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c017', type: 'Struttura non censita rilevata', confidence: 0.84, image: 'sat_tile_042.jpg' },
+        { time: daysAgo(1), caseId: 'c019', type: 'Veicoli raggruppati (anomalia)', confidence: 0.79, image: 'drone_f201.jpg' },
+      ],
+    },
+    {
+      id: 'audio', name: 'Audio Forensics', engine: 'VoicePrint AI', version: '2.1.0',
+      status: 'ONLINE', accuracy: 0.93, avgInference: 8.7, fps: 115, gpuUsage: 28,
+      totalProcessed: 2340, todayProcessed: 31,
+      classes: ['Speaker ID', 'Trascrizione', 'Keyword Detection', 'Noise Filter', 'Emotion Analysis'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c015', type: 'Speaker match: Soggetto Gamma (91%)', confidence: 0.91, image: 'audio_wave_01.png' },
+        { time: daysAgo(1), caseId: 'c009', type: 'Keyword rilevata: "consegna domani"', confidence: 0.87, image: 'audio_spec_03.png' },
+      ],
+    },
+    {
+      id: 'video', name: 'Video Frame Extraction', engine: 'FrameX AI', version: '4.0.3',
+      status: 'ONLINE', accuracy: 0.95, avgInference: 2.1, fps: 476, gpuUsage: 55,
+      totalProcessed: 6780, todayProcessed: 156,
+      classes: ['Keyframe Extraction', 'Motion Detection', 'Scene Change', 'Object Tracking'],
+      recentDetections: [
+        { time: daysAgo(0), caseId: 'c001', type: '847 keyframes estratti', confidence: 0.97, image: 'keyframe_montage.jpg' },
+        { time: daysAgo(0), caseId: 'c004', type: 'Motion detected: 12 sequenze', confidence: 0.93, image: 'motion_map.jpg' },
+      ],
+    },
+  ],
+  globalStats: {
+    totalInferences: 43650, todayInferences: 882, avgLatency: 12.4,
+    gpuCluster: { total: 4, active: 4, utilization: 72 },
+    uptime: 99.97, lastRestart: daysAgo(14),
+  },
+};
+
+// ── CrimeGraph ──
+export const DEMO_CRIMEGRAPH = {
+  nodes: [
+    { id: 'n1', label: 'Marco Rossi', type: 'person', risk: 0.87, cases: ['c001', 'c010'] },
+    { id: 'n2', label: 'FI 482 KL', type: 'vehicle', risk: 0.72, cases: ['c002', 'c004'] },
+    { id: 'n3', label: 'Via Roma 42, Milano', type: 'location', risk: 0.65, cases: ['c001'] },
+    { id: 'n4', label: 'Luigi Ferrara', type: 'person', risk: 0.91, cases: ['c003', 'c013'] },
+    { id: 'n5', label: '+39 333 XXX 4567', type: 'phone', risk: 0.58, cases: ['c009', 'c015'] },
+    { id: 'n6', label: 'Org. Criminale Alpha', type: 'organization', risk: 0.95, cases: ['c001', 'c010', 'c013'] },
+    { id: 'n7', label: 'wallet_0x8f3a...', type: 'crypto', risk: 0.82, cases: ['c003'] },
+    { id: 'n8', label: 'Anna Bianchi', type: 'person', risk: 0.44, cases: ['c005'] },
+    { id: 'n9', label: 'MI 923 AB', type: 'vehicle', risk: 0.68, cases: ['c004', 'c014'] },
+    { id: 'n10', label: 'Deposito Via Industriale', type: 'location', risk: 0.78, cases: ['c010', 'c017'] },
+    { id: 'n11', label: 'Giovanni Esposito', type: 'person', risk: 0.83, cases: ['c007', 'c009'] },
+    { id: 'n12', label: 'Piazza Duomo, Milano', type: 'location', risk: 0.52, cases: ['c002'] },
+    { id: 'n13', label: 'Server dark-market.onion', type: 'digital', risk: 0.96, cases: ['c003', 'c020'] },
+    { id: 'n14', label: 'Conto CH-IBAN-9382', type: 'financial', risk: 0.88, cases: ['c003', 'c013'] },
+    { id: 'n15', label: 'Porto di Napoli', type: 'location', risk: 0.71, cases: ['c014', 'c016'] },
+  ],
+  edges: [
+    { from: 'n1', to: 'n3', relation: 'frequenta', weight: 0.9 },
+    { from: 'n1', to: 'n6', relation: 'membro', weight: 0.95 },
+    { from: 'n4', to: 'n6', relation: 'capo', weight: 0.98 },
+    { from: 'n4', to: 'n7', relation: 'proprietario', weight: 0.85 },
+    { from: 'n4', to: 'n14', relation: 'titolare', weight: 0.92 },
+    { from: 'n2', to: 'n1', relation: 'registrato_a', weight: 0.88 },
+    { from: 'n5', to: 'n11', relation: 'utilizzato_da', weight: 0.76 },
+    { from: 'n5', to: 'n4', relation: 'contattato', weight: 0.82 },
+    { from: 'n9', to: 'n10', relation: 'rilevato_presso', weight: 0.71 },
+    { from: 'n11', to: 'n6', relation: 'associato', weight: 0.79 },
+    { from: 'n13', to: 'n7', relation: 'transazione', weight: 0.93 },
+    { from: 'n13', to: 'n4', relation: 'amministrato_da', weight: 0.87 },
+    { from: 'n8', to: 'n12', relation: 'testimone_a', weight: 0.55 },
+    { from: 'n6', to: 'n10', relation: 'base_operativa', weight: 0.91 },
+    { from: 'n6', to: 'n15', relation: 'operazioni', weight: 0.74 },
+  ],
+  stats: { totalNodes: 15, totalEdges: 15, communities: 3, avgPageRank: 0.067, highRiskEntities: 7 },
+};
+
+// ── Predictive Intelligence ──
+export const DEMO_PREDICTIVE = {
+  hotZones: [
+    { id: 'hz1', area: 'Milano Centro', lat: 45.464, lng: 9.190, riskLevel: 0.89, activeCases: 6, prediction: 'Alta probabilità eventi criminalità organizzata nelle prossime 72h' },
+    { id: 'hz2', area: 'Roma Termini', lat: 41.901, lng: 12.502, riskLevel: 0.82, activeCases: 4, prediction: 'Rischio furto/borseggio superiore alla media' },
+    { id: 'hz3', area: 'Napoli Porto', lat: 40.843, lng: 14.268, riskLevel: 0.91, activeCases: 5, prediction: 'Traffico illecito: pattern ripetitivo ogni 14gg' },
+    { id: 'hz4', area: 'Torino Barriera', lat: 45.089, lng: 7.700, riskLevel: 0.74, activeCases: 3, prediction: 'Spaccio: aumento del 23% rispetto al mese precedente' },
+    { id: 'hz5', area: 'Palermo Zen', lat: 38.151, lng: 13.329, riskLevel: 0.86, activeCases: 4, prediction: 'Estorsioni: 3 segnalazioni non correlate in 7gg' },
+  ],
+  riskScoring: [
+    { entityId: 'n4', name: 'Luigi Ferrara', score: 0.94, trend: 'rising', factors: ['3 casi collegati', 'Transazioni crypto sospette', 'Contatti frequenti con noti'] },
+    { entityId: 'n6', name: 'Org. Criminale Alpha', score: 0.96, trend: 'stable', factors: ['5 membri identificati', 'Base operativa attiva', 'Operazioni multi-città'] },
+    { entityId: 'n1', name: 'Marco Rossi', score: 0.87, trend: 'rising', factors: ['Presente su 2 scene criminis', 'Veicolo segnalato', 'Membro organizzazione'] },
+    { entityId: 'n11', name: 'Giovanni Esposito', score: 0.83, trend: 'declining', factors: ['Contatti telefono sospetti', 'Precedenti penali', 'Ultimo contatto 5gg fa'] },
+    { entityId: 'n13', name: 'Server dark-market.onion', score: 0.96, trend: 'stable', factors: ['Transazioni attive', 'Collegato a 2 casi', 'Hosting anonimo'] },
+  ],
+  patterns: [
+    { id: 'p1', name: 'Ciclo 14gg Porto Napoli', description: 'Movimenti sospetti ogni 14 giorni al Porto di Napoli, correlati a container specifici', confidence: 0.88, relatedCases: ['c014', 'c016'] },
+    { id: 'p2', name: 'Triangolo Milano-Roma-Napoli', description: 'Spostamenti ciclici di soggetti tra le tre città con tempistiche regolari', confidence: 0.82, relatedCases: ['c001', 'c010', 'c014'] },
+    { id: 'p3', name: 'Riciclaggio Crypto', description: 'Schema di layering via exchange decentralizzati con wallet ricorrenti', confidence: 0.91, relatedCases: ['c003', 'c013'] },
+    { id: 'p4', name: 'Escalation Violenza Q1', description: 'Aumento 34% episodi violenti rispetto Q4 2025, concentrati area metropolitana', confidence: 0.76, relatedCases: ['c001', 'c007', 'c010'] },
+  ],
+  predictions: [
+    { timeframe: '24h', event: 'Possibile movimento merce al Porto Napoli', probability: 0.78, severity: 'HIGH' },
+    { timeframe: '48h', event: 'Rischio confronto tra gruppi rivali zona Milano Sud', probability: 0.65, severity: 'CRITICAL' },
+    { timeframe: '72h', event: 'Transazione crypto anomala attesa su wallet monitorato', probability: 0.82, severity: 'MEDIUM' },
+    { timeframe: '7gg', event: 'Possibile tentativo estorsione area Palermo Zen', probability: 0.71, severity: 'HIGH' },
+  ],
+};
+
+// ── Reports ──
+export const DEMO_REPORTS = [
+  { id: 'r001', caseId: 'c001', caseNumber: 'CI-2026-0001', title: 'Rapina Via Roma - Report Sommario', type: 'SUMMARY', status: 'COMPLETED', createdAt: daysAgo(2), createdBy: 'Admin CrimeIntel', pages: 12, fileSize: 2450000 },
+  { id: 'r002', caseId: 'c001', caseNumber: 'CI-2026-0001', title: 'Rapina Via Roma - Report Forense', type: 'FORENSIC', status: 'COMPLETED', createdAt: daysAgo(1), createdBy: 'Sara Neri', pages: 28, fileSize: 8900000 },
+  { id: 'r003', caseId: 'c003', caseNumber: 'CI-2026-0003', title: 'Truffa Crypto - Analisi Finanziaria', type: 'FORENSIC', status: 'COMPLETED', createdAt: daysAgo(3), createdBy: 'Luca Bianchi', pages: 34, fileSize: 5600000 },
+  { id: 'r004', caseId: 'c004', caseNumber: 'CI-2026-0004', title: 'Spaccio Parco Sempione - Sommario', type: 'SUMMARY', status: 'COMPLETED', createdAt: daysAgo(3), createdBy: 'Marco Verdi', pages: 8, fileSize: 1200000 },
+  { id: 'r005', caseId: 'c010', caseNumber: 'CI-2026-0010', title: 'Estorsione Commercianti - Report AI', type: 'AI_ANALYSIS', status: 'COMPLETED', createdAt: daysAgo(1), createdBy: 'Sistema AI', pages: 18, fileSize: 4100000 },
+  { id: 'r006', caseId: 'c013', caseNumber: 'CI-2026-0013', title: 'Sequestro Persona - Timeline', type: 'TIMELINE', status: 'COMPLETED', createdAt: daysAgo(0), createdBy: 'Admin CrimeIntel', pages: 15, fileSize: 3200000 },
+  { id: 'r007', caseId: 'c003', caseNumber: 'CI-2026-0003', title: 'Truffa Crypto - HyperFusion Report', type: 'FUSION', status: 'PROCESSING', createdAt: daysAgo(0), createdBy: 'Sistema AI', pages: 0, fileSize: 0 },
+  { id: 'r008', caseId: 'c014', caseNumber: 'CI-2026-0014', title: 'Contrabbando Napoli - Export Forense', type: 'FORENSIC_EXPORT', status: 'COMPLETED', createdAt: daysAgo(4), createdBy: 'Sara Neri', pages: 42, fileSize: 12400000 },
+];
+
+// ── System Settings / Security ──
+export const DEMO_SYSTEM = {
+  encryption: {
+    atRest: 'AES-256-CTR', inTransit: 'TLS 1.3', certificates: 'RSA-4096',
+    hashAlgorithm: 'SHA-512', passwordHashing: 'Argon2id',
+    keyRotationDays: 90, lastRotation: daysAgo(12), nextRotation: '2026-05-10',
+  },
+  compliance: [
+    { name: 'GDPR', status: 'COMPLIANT', lastAudit: daysAgo(15), score: 98, details: 'Data minimization, right to erasure, DPO assigned' },
+    { name: 'AI Act (EU)', status: 'COMPLIANT', lastAudit: daysAgo(10), score: 95, details: 'High-risk AI system registered, human oversight, transparency' },
+    { name: 'ISO 27001', status: 'COMPLIANT', lastAudit: daysAgo(30), score: 96, details: 'Information security management certified' },
+    { name: 'Chain of Custody', status: 'ACTIVE', lastAudit: daysAgo(0), score: 100, details: 'SHA-512 hashchain, zero-knowledge integrity proofs' },
+    { name: 'NIST CSF', status: 'COMPLIANT', lastAudit: daysAgo(20), score: 92, details: 'Identify, Protect, Detect, Respond, Recover' },
+  ],
+  infrastructure: {
+    deployment: 'Hybrid (Cloud + Edge)', database: 'PostgreSQL 16 + Redis 7',
+    aiCluster: '4x NVIDIA A100 (Simulated)', storage: 'MinIO S3-Compatible',
+    graphDb: 'Neo4j 5.x', messageQueue: 'Redis Streams',
+    uptime: 99.97, lastIncident: daysAgo(45),
+    services: [
+      { name: 'API Gateway', status: 'ONLINE', latency: 12, uptime: 99.99 },
+      { name: 'AI Engine', status: 'ONLINE', latency: 45, uptime: 99.95 },
+      { name: 'Database', status: 'ONLINE', latency: 3, uptime: 99.99 },
+      { name: 'Redis Cache', status: 'ONLINE', latency: 1, uptime: 99.99 },
+      { name: 'MinIO Storage', status: 'ONLINE', latency: 8, uptime: 99.98 },
+      { name: 'Neo4j Graph', status: 'ONLINE', latency: 5, uptime: 99.96 },
+      { name: 'NeuroSearch', status: 'ONLINE', latency: 9, uptime: 99.97 },
+    ],
+  },
+  rbac: {
+    roles: [
+      { name: 'ADMIN', permissions: ['*'], users: 2 },
+      { name: 'SUPERVISOR', permissions: ['cases.*', 'evidence.*', 'reports.*', 'audit.read', 'users.read', 'ai.*'], users: 1 },
+      { name: 'INVESTIGATOR', permissions: ['cases.own', 'evidence.own', 'reports.own', 'search', 'ai.run'], users: 2 },
+      { name: 'ANALYST', permissions: ['cases.read', 'evidence.read', 'reports.read', 'search', 'analytics.read', 'ai.read'], users: 2 },
+      { name: 'VIEWER', permissions: ['cases.read', 'evidence.read'], users: 1 },
+    ],
+  },
+};
+
 export function demoSearch(query: string) {
   const q = query.toLowerCase();
   const cases = DEMO_CASES.filter(c =>
