@@ -234,4 +234,135 @@ INSERT INTO system_settings (key, value) VALUES
   ('encryption', '{"atRest": "AES-256-CTR", "inTransit": "TLS 1.3", "certificates": "RSA-4096", "hashAlgorithm": "SHA-512", "passwordHashing": "Argon2id", "keyRotationDays": 90}'),
   ('compliance', '{"gdpr": "COMPLIANT", "aiAct": "COMPLIANT", "iso27001": "COMPLIANT", "chainOfCustody": "ACTIVE", "nistCsf": "COMPLIANT"}'),
   ('infrastructure', '{"deployment": "Hybrid (Cloud + Edge)", "database": "PostgreSQL 16 + Redis 7", "aiCluster": "4x NVIDIA A100", "storage": "MinIO S3-Compatible", "graphDb": "Neo4j 5.x"}'),
-  ('version', '{"app": "7.0 Omega", "api": "7.0.0", "aiEngine": "3.2.1", "dashboard": "7.0.0"}');
+  ('version', '{"app": "7.0 Omega", "api": "7.0.0", "aiEngine": "3.2.1", "dashboard": "7.0.0"}'),
+  ('ai_config', '{"defaultModules": ["yolov8", "facerec", "lpr", "audio_nlp", "document_ocr"], "maxConcurrentJobs": 8, "gpuAllocation": "auto", "retryOnFailure": true, "maxRetries": 3, "timeoutMs": 300000}'),
+  ('notifications', '{"emailEnabled": true, "pushEnabled": true, "slackWebhook": null, "criticalAlertSMS": true, "digestFrequency": "daily", "escalationChain": ["INVESTIGATOR", "SUPERVISOR", "ADMIN"]}'),
+  ('retention', '{"auditLogDays": 365, "evidenceDays": null, "reportsDays": 730, "deletedCasesDays": 90, "sessionDays": 30, "backupFrequency": "6h"}'),
+  ('realtime', '{"enabledTables": ["cases", "evidence", "audit_log", "notifications"], "broadcastThrottle": 100, "presenceEnabled": true, "maxChannels": 50}');
+
+-- ============================================================
+-- CASE TIMELINE (eventi cronologici per caso)
+-- ============================================================
+INSERT INTO case_timeline (case_id, event_type, title, description, actor_id, metadata) VALUES
+  -- Caso 1: Rapina Via Roma
+  ('c0000000-0000-0000-0000-000000000001', 'case_opened', 'Caso aperto', 'Segnalazione rapina a mano armata in gioielleria.', 'a0000000-0000-0000-0000-000000000001', '{"source": "112", "priority_initial": "HIGH"}'),
+  ('c0000000-0000-0000-0000-000000000001', 'evidence_added', 'CCTV acquisite', '2 video CCTV acquisiti dalla gioielleria e dalla strada.', 'a0000000-0000-0000-0000-000000000003', '{"files": 2, "total_size": "434MB"}'),
+  ('c0000000-0000-0000-0000-000000000001', 'ai_analysis', 'AI: Rilevamento armi e volti', 'YOLOv8 ha identificato armi da fuoco e 2 volti parziali. FaceRec ha trovato 1 match.', 'a0000000-0000-0000-0000-000000000001', '{"modules": ["yolov8", "facerec"], "confidence": 0.94}'),
+  ('c0000000-0000-0000-0000-000000000001', 'evidence_added', 'Testimonianza audio raccolta', 'Registrazione audio della cassiera, 2 speaker identificati.', 'a0000000-0000-0000-0000-000000000003', '{"duration_min": 12}'),
+  ('c0000000-0000-0000-0000-000000000001', 'fusion_run', 'HyperFusion completato', 'Score 0.78 — correlazioni tra veicolo e soggetti noti.', 'a0000000-0000-0000-0000-000000000001', '{"fusion_score": 0.78}'),
+  ('c0000000-0000-0000-0000-000000000001', 'report_generated', 'Report forense generato', '28 pagine, analisi completa scena del crimine.', 'a0000000-0000-0000-0000-000000000003', '{"pages": 28, "type": "FORENSIC"}'),
+  -- Caso 3: Truffa Crypto
+  ('c0000000-0000-0000-0000-000000000003', 'case_opened', 'Segnalazione ricevuta', 'Denuncia da parte di 14 vittime in 4 paesi EU.', 'a0000000-0000-0000-0000-000000000004', '{"victims": 14, "countries": 4}'),
+  ('c0000000-0000-0000-0000-000000000003', 'evidence_added', 'Blockchain analysis caricata', 'Analisi transazioni wallet 0x8f3a, volume €2.4M.', 'a0000000-0000-0000-0000-000000000004', '{"blockchain": "Ethereum", "volume": "€2.4M"}'),
+  ('c0000000-0000-0000-0000-000000000003', 'ai_analysis', 'AI: OCR piattaforma fraudolenta', 'Testo rilevato: CryptoYield Pro, rendimento 340%.', 'a0000000-0000-0000-0000-000000000004', '{"module": "document_ocr", "confidence": 0.92}'),
+  ('c0000000-0000-0000-0000-000000000003', 'status_change', 'Caso promosso a CRITICAL', 'Volume superiore a €2M, coinvolgimento internazionale.', 'a0000000-0000-0000-0000-000000000001', '{"old_status": "OPEN", "new_status": "ACTIVE", "old_priority": "HIGH", "new_priority": "CRITICAL"}'),
+  -- Caso 7: Aggressione Navigli
+  ('c0000000-0000-0000-0000-000000000007', 'case_opened', 'Emergenza aggressione', 'Aggressione con coltello in zona Navigli, vittima in codice rosso.', 'a0000000-0000-0000-0000-000000000002', '{"severity": "CRITICAL", "weapon": "knife"}'),
+  ('c0000000-0000-0000-0000-000000000007', 'evidence_added', 'CCTV Navigli acquisita', 'Video sorveglianza con soggetto armato in fuga.', 'a0000000-0000-0000-0000-000000000003', '{"duration_sec": 47}'),
+  ('c0000000-0000-0000-0000-000000000007', 'ai_analysis', 'AI: Tracking soggetto', 'Riconosciuto coltello e direzione fuga del soggetto.', 'a0000000-0000-0000-0000-000000000001', '{"module": "yolov8", "objects": ["knife", "person_running"]}'),
+  -- Caso 10: Estorsione
+  ('c0000000-0000-0000-0000-000000000010', 'case_opened', 'Denuncia collettiva', '14 commercianti zona Porta Venezia denunciano estorsione.', 'a0000000-0000-0000-0000-000000000002', '{"victims": 14}'),
+  ('c0000000-0000-0000-0000-000000000010', 'evidence_added', 'Registrazione minacce', 'Audio di minacce dirette con richiesta pagamento mensile.', 'a0000000-0000-0000-0000-000000000002', '{"emotion": "threatening"}'),
+  ('c0000000-0000-0000-0000-000000000010', 'ai_analysis', 'AI: FaceRec 2 soggetti', 'Identificati Soggetto Alpha e Beta con match nel database.', 'a0000000-0000-0000-0000-000000000001', '{"matches": 2, "confidence": 0.88}'),
+  ('c0000000-0000-0000-0000-000000000010', 'graph_update', 'Grafo aggiornato', 'Collegamento con Org. Criminale Alpha confermato.', 'a0000000-0000-0000-0000-000000000001', '{"organization": "Alpha", "confidence": 0.95}'),
+  -- Caso 13: Sequestro
+  ('c0000000-0000-0000-0000-000000000013', 'case_opened', 'Allarme sequestro', 'Imprenditore 52 anni sequestrato, richiesta riscatto €500k.', 'a0000000-0000-0000-0000-000000000001', '{"ransom": "€500.000", "deadline": "48h"}'),
+  ('c0000000-0000-0000-0000-000000000013', 'evidence_added', 'CCTV e chiamata riscatto', 'Video sequestro e audio chiamata con voce distorta.', 'a0000000-0000-0000-0000-000000000001', '{"files": 2}'),
+  ('c0000000-0000-0000-0000-000000000013', 'ai_analysis', 'AI: Analisi veicolo e voce', 'Fiat Ducato bianco targa RM 445 ZZ. Voce distorta analizzata.', 'a0000000-0000-0000-0000-000000000001', '{"modules": ["lpr", "audio_nlp"], "plate": "RM 445 ZZ"}'),
+  ('c0000000-0000-0000-0000-000000000013', 'status_change', 'Vittima liberata', 'Soggetto liberato dopo 72h. Operazione conclusa con successo.', 'a0000000-0000-0000-0000-000000000001', '{"resolution": "rescued", "hours": 72}'),
+  -- Caso 20: Pedopornografia
+  ('c0000000-0000-0000-0000-000000000020', 'case_opened', 'Operazione Dark Shield avviata', 'Piattaforma dark web con 12.000 utenti identificata.', 'a0000000-0000-0000-0000-000000000001', '{"codename": "Dark Shield", "users": 12000}'),
+  ('c0000000-0000-0000-0000-000000000020', 'evidence_added', 'Server dump acquisito', 'Metadata server con 847 utenti identificati, 1243 IP.', 'a0000000-0000-0000-0000-000000000001', '{"identified_users": 847, "ip_addresses": 1243}'),
+  ('c0000000-0000-0000-0000-000000000020', 'ai_analysis', 'AI: Analisi network topology', 'Mappatura completa rete con 18 paesi coinvolti.', 'a0000000-0000-0000-0000-000000000004', '{"countries": 18, "nodes": 847}'),
+  ('c0000000-0000-0000-0000-000000000020', 'status_change', '45 arresti in corso', 'Mandati emessi in coordinamento con Europol.', 'a0000000-0000-0000-0000-000000000001', '{"arrests_pending": 45, "coordination": "Europol"}'),
+  -- Caso 21: Rapina Portavalori
+  ('c0000000-0000-0000-0000-000000000021', 'case_opened', 'Rapina portavalori A1', '4 soggetti armati con esplosivo, blocco autostradale.', 'a0000000-0000-0000-0000-000000000002', '{"armed_subjects": 4, "explosive": true}'),
+  ('c0000000-0000-0000-0000-000000000021', 'evidence_added', 'Dashcam e satellite', 'Video dashcam portavalori e immagini satellite.', 'a0000000-0000-0000-0000-000000000002', '{"files": 2}'),
+  ('c0000000-0000-0000-0000-000000000021', 'ai_analysis', 'AI: Rilevamento esplosivi e veicoli', '3 veicoli identificati, esplosivo confermato, rotta di fuga SS67.', 'a0000000-0000-0000-0000-000000000001', '{"modules": ["yolov8", "satellite"], "vehicles": 3, "escape_route": "SS67"}');
+
+-- ============================================================
+-- FUSION RESULTS (risultati HyperFusion per i casi principali)
+-- ============================================================
+INSERT INTO fusion_results (case_id, fusion_score, summary, entities, correlations, recommendations, timeline, risk_assessment, processing_ms) VALUES
+  ('c0000000-0000-0000-0000-000000000001', 0.78, 'Rapina organizzata con 3 soggetti identificati. Veicolo BMW X3 nero MI 771 AB collegato a precedente furto. Possibile connessione con Org. Criminale Alpha.',
+    '[{"type": "person", "label": "Soggetto 1 (mascherato)", "confidence": 0.94}, {"type": "person", "label": "Marco Rossi (match parziale)", "confidence": 0.72}, {"type": "vehicle", "label": "BMW X3 nero MI 771 AB", "confidence": 0.88}]',
+    '[{"from": "Soggetto 1", "to": "Marco Rossi", "type": "possible_identity", "strength": 0.72}, {"from": "BMW X3", "to": "Furto auto caso CI-2026-0002", "type": "vehicle_link", "strength": 0.65}]',
+    '["Verificare targa MI 771 AB in database nazionale", "Richiedere CCTV strade limitrofe per tracking veicolo", "Confrontare DNA guanto trovato con database"]',
+    '[{"time": "14:32", "event": "Ingresso gioielleria"}, {"time": "14:35", "event": "Spari intimidatori"}, {"time": "14:38", "event": "Fuga con bottino"}, {"time": "14:41", "event": "Veicolo ripreso in Via Manzoni"}]',
+    '{"overallRisk": "HIGH", "recidivismProbability": 0.78, "organizationLink": 0.65, "evidenceStrength": "STRONG"}',
+    4523),
+  ('c0000000-0000-0000-0000-000000000003', 0.91, 'Schema Ponzi internazionale con ramificazioni in 4 paesi EU. Wallet principale collegato a exchange non regolamentati. Leader identificato come Luigi Ferrara.',
+    '[{"type": "person", "label": "Luigi Ferrara (Il Professore)", "confidence": 0.91}, {"type": "crypto", "label": "Wallet 0x8f3a", "confidence": 0.98}, {"type": "financial", "label": "Conto CH-IBAN-9382", "confidence": 0.88}]',
+    '[{"from": "Wallet 0x8f3a", "to": "CH-IBAN-9382", "type": "fund_flow", "strength": 0.92}, {"from": "Luigi Ferrara", "to": "Server dark-market", "type": "admin_access", "strength": 0.87}]',
+    '["Coordinare con autorità svizzere per blocco conto", "Richiedere freeze wallet tramite exchange", "Emettere mandato arresto internazionale per Ferrara"]',
+    '[{"time": "T-6 mesi", "event": "Piattaforma online"}, {"time": "T-3 mesi", "event": "Prime vittime italiane"}, {"time": "T-1 mese", "event": "Volume supera €2M"}, {"time": "T-0", "event": "Segnalazione e indagine"}]',
+    '{"overallRisk": "CRITICAL", "financialImpact": "€2.4M", "crossBorder": true, "evidenceStrength": "VERY_STRONG"}',
+    8912),
+  ('c0000000-0000-0000-0000-000000000007', 0.85, 'Aggressione premeditata. Soggetto identificato parzialmente via CCTV. Coltello modello militare. Possibile movente passionale.',
+    '[{"type": "person", "label": "Soggetto sconosciuto (parziale)", "confidence": 0.68}, {"type": "weapon", "label": "Coltello militare Ka-Bar", "confidence": 0.82}]',
+    '[{"from": "Soggetto", "to": "Vittima", "type": "known_to_victim", "strength": 0.71}]',
+    '["Verificare precedenti della vittima per possibili moventi", "Richiedere CCTV bar limitrofi per ricostruzione percorso", "Analisi DNA su coltello se recuperato"]',
+    '[{"time": "22:15", "event": "Soggetto arriva a piedi"}, {"time": "22:18", "event": "Confronto verbale"}, {"time": "22:19", "event": "Aggressione"}, {"time": "22:20", "event": "Fuga verso Porta Ticinese"}]',
+    '{"overallRisk": "HIGH", "violenceEscalation": 0.82, "evidenceStrength": "MODERATE"}',
+    3211),
+  ('c0000000-0000-0000-0000-000000000010', 0.88, 'Rete estorsiva organizzata operante da 8+ mesi. 2 soggetti principali collegati a Org. Criminale Alpha. Schema sistematico con importi crescenti.',
+    '[{"type": "person", "label": "Soggetto Alpha", "confidence": 0.88}, {"type": "person", "label": "Soggetto Beta", "confidence": 0.85}, {"type": "organization", "label": "Org. Criminale Alpha", "confidence": 0.95}]',
+    '[{"from": "Soggetto Alpha", "to": "Org. Alpha", "type": "member", "strength": 0.95}, {"from": "Estorsione", "to": "Rapina CI-2026-0001", "type": "same_organization", "strength": 0.87}]',
+    '["Coordinare operazione di arresto simultanea", "Proteggere testimoni commercianti", "Sequestrare conti collegati"]',
+    '[{"time": "T-8 mesi", "event": "Prime richieste"}, {"time": "T-4 mesi", "event": "Escalation importi"}, {"time": "T-2 mesi", "event": "Minacce fisiche"}, {"time": "T-0", "event": "Denuncia collettiva"}]',
+    '{"overallRisk": "CRITICAL", "organizationThreat": "HIGH", "evidenceStrength": "STRONG"}',
+    5678),
+  ('c0000000-0000-0000-0000-000000000013', 0.92, 'Sequestro a scopo estorsivo orchestrato da organizzazione con legami finanziari internazionali. Vittima liberata. Riscatto non pagato.',
+    '[{"type": "person", "label": "4 soggetti (2 identificati)", "confidence": 0.84}, {"type": "vehicle", "label": "Fiat Ducato RM 445 ZZ", "confidence": 0.90}, {"type": "person", "label": "Luigi Ferrara (mandante)", "confidence": 0.76}]',
+    '[{"from": "Sequestro", "to": "Truffa Crypto", "type": "financial_link", "strength": 0.82}, {"from": "Ferrara", "to": "Org. Alpha", "type": "leadership", "strength": 0.98}]',
+    '["Emettere mandato per Ferrara", "Sequestro preventivo beni", "Richiedere collaborazione Interpol"]',
+    '[{"time": "Giorno 1 - 06:00", "event": "Sequestro vittima"}, {"time": "Giorno 1 - 14:00", "event": "Richiesta riscatto"}, {"time": "Giorno 2 - 09:00", "event": "Secondo contatto"}, {"time": "Giorno 3 - 18:00", "event": "Liberazione vittima"}]',
+    '{"overallRisk": "CRITICAL", "organizationThreat": "VERY_HIGH", "crossBorder": true, "evidenceStrength": "STRONG"}',
+    7234),
+  ('c0000000-0000-0000-0000-000000000020', 0.96, 'Rete pedopornografica internazionale con 12.000 utenti. Server sequestrato. 847 utenti identificati in 18 paesi. Operazione coordinata con Europol.',
+    '[{"type": "digital", "label": "Server dark-market.onion", "confidence": 0.98}, {"type": "person", "label": "847 utenti identificati", "confidence": 0.91}]',
+    '[{"from": "Server", "to": "Wallet crypto", "type": "payment_system", "strength": 0.93}, {"from": "Server admin", "to": "Luigi Ferrara", "type": "possible_link", "strength": 0.67}]',
+    '["Proseguire identificazione utenti rimanenti", "Coordinare arresti internazionali", "Preservare prove digitali per tribunale"]',
+    '[{"time": "T-12 mesi", "event": "Piattaforma attiva"}, {"time": "T-6 mesi", "event": "Segnalazione Interpol"}, {"time": "T-2 mesi", "event": "Infiltrazione undercover"}, {"time": "T-0", "event": "Sequestro server"}]',
+    '{"overallRisk": "CRITICAL", "victimCount": 12000, "internationalScope": true, "evidenceStrength": "OVERWHELMING"}',
+    12456);
+
+-- ============================================================
+-- AI RESULTS (risultati specifici per modulo AI)
+-- ============================================================
+INSERT INTO ai_results (evidence_id, case_id, module, engine_version, inference_ms, confidence, result_type, result_data) VALUES
+  -- Caso 1: Rapina — CCTV gioielleria
+  ((SELECT id FROM evidence WHERE file_name = 'CCTV_gioielleria_01.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000001', 'yolov8', 'v8.1.0', 234, 0.94, 'object_detection', '{"detections": [{"class": "gun", "confidence": 0.94, "bbox": [120, 340, 180, 420]}, {"class": "mask", "confidence": 0.91, "bbox": [200, 100, 280, 200]}, {"class": "bag", "confidence": 0.88, "bbox": [350, 300, 450, 500]}], "frame_count": 1847, "fps_processed": 15}'),
+  ((SELECT id FROM evidence WHERE file_name = 'CCTV_gioielleria_01.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000001', 'facerec', 'v2.4.0', 1890, 0.72, 'face_recognition', '{"faces_detected": 2, "faces_matched": 1, "matches": [{"name": "Marco Rossi", "confidence": 0.72, "database": "national_wanted"}], "quality": "partial_occlusion"}'),
+  -- Caso 1: CCTV strada
+  ((SELECT id FROM evidence WHERE file_name = 'CCTV_strada_esterno.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000001', 'lpr', 'v3.1.0', 156, 0.96, 'plate_recognition', '{"plates": [{"text": "MI 771 AB", "confidence": 0.96, "vehicle_type": "SUV", "color": "nero", "make": "BMW"}], "direction": "east", "speed_estimate": "85km/h"}'),
+  -- Caso 1: Audio testimonianza
+  ((SELECT id FROM evidence WHERE file_name = 'testimonianza_audio.wav' LIMIT 1), 'c0000000-0000-0000-0000-000000000001', 'audio_nlp', 'v1.8.0', 3420, 0.87, 'speech_analysis', '{"speakers": 2, "language": "it", "keywords": ["tre uomini", "pistola", "furgone bianco", "mascherati"], "sentiment": "distressed", "duration_sec": 720}'),
+  -- Caso 2: Targa parcheggio
+  ((SELECT id FROM evidence WHERE file_name = 'foto_targa_bmw.jpg' LIMIT 1), 'c0000000-0000-0000-0000-000000000002', 'lpr', 'v3.1.0', 89, 0.98, 'plate_recognition', '{"plates": [{"text": "FI 482 KL", "confidence": 0.98, "vehicle_type": "SUV", "color": "bianco", "make": "BMW", "model": "X5"}]}'),
+  -- Caso 3: Screenshot crypto
+  ((SELECT id FROM evidence WHERE file_name = 'screenshot_piattaforma.png' LIMIT 1), 'c0000000-0000-0000-0000-000000000003', 'document_ocr', 'v2.1.0', 567, 0.92, 'text_extraction', '{"text_blocks": ["CryptoYield Pro", "Rendimento garantito 340%", "Investimento minimo €500"], "language": "it", "fraud_indicators": ["guaranteed_returns", "unrealistic_yield"]}'),
+  -- Caso 4: Drone sorveglianza
+  ((SELECT id FROM evidence WHERE file_name = 'drone_sorveglianza.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000004', 'yolov8', 'v8.1.0', 4567, 0.85, 'object_detection', '{"detections": [{"class": "person", "count": 8}, {"class": "backpack", "count": 3}, {"class": "phone", "count": 5}], "tracking": true, "unique_persons": 8, "frame_count": 28400}'),
+  -- Caso 4: Intercettazione
+  ((SELECT id FROM evidence WHERE file_name = 'intercettazione_01.wav' LIMIT 1), 'c0000000-0000-0000-0000-000000000004', 'audio_nlp', 'v1.8.0', 8900, 0.89, 'speech_analysis', '{"speakers": 3, "language": "it", "keywords": ["consegna", "piazza", "domani sera", "merce", "contanti"], "duration_sec": 2700, "encrypted_portions": false}'),
+  -- Caso 7: CCTV Navigli
+  ((SELECT id FROM evidence WHERE file_name = 'CCTV_navigli_01.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000007', 'yolov8', 'v8.1.0', 198, 0.93, 'object_detection', '{"detections": [{"class": "knife", "confidence": 0.93, "bbox": [340, 280, 380, 350]}, {"class": "person_running", "confidence": 0.91}], "frame_count": 1420, "tracking": true}'),
+  -- Caso 10: Face recognition estorsori
+  ((SELECT id FROM evidence WHERE file_name = 'foto_soggetti_estorsori.jpg' LIMIT 1), 'c0000000-0000-0000-0000-000000000010', 'facerec', 'v2.4.0', 2340, 0.88, 'face_recognition', '{"faces_detected": 2, "faces_matched": 2, "matches": [{"alias": "Soggetto_Alpha", "confidence": 0.88, "database": "local_watchlist"}, {"alias": "Soggetto_Beta", "confidence": 0.85, "database": "local_watchlist"}]}'),
+  -- Caso 10: Audio minacce
+  ((SELECT id FROM evidence WHERE file_name = 'registrazione_minacce.wav' LIMIT 1), 'c0000000-0000-0000-0000-000000000010', 'audio_nlp', 'v1.8.0', 5670, 0.92, 'speech_analysis', '{"speakers": 2, "language": "it", "keywords": ["pagare", "conseguenze", "ogni mese", "famiglia"], "emotion": {"dominant": "threatening", "confidence": 0.92}, "voiceprint_extracted": true}'),
+  -- Caso 13: CCTV sequestro LPR
+  ((SELECT id FROM evidence WHERE file_name = 'CCTV_sequestro.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000013', 'lpr', 'v3.1.0', 312, 0.90, 'plate_recognition', '{"plates": [{"text": "RM 445 ZZ", "confidence": 0.90, "vehicle_type": "van", "color": "bianco", "make": "Fiat", "model": "Ducato"}], "persons_detected": 4}'),
+  -- Caso 13: Audio riscatto
+  ((SELECT id FROM evidence WHERE file_name = 'chiamata_riscatto.wav' LIMIT 1), 'c0000000-0000-0000-0000-000000000013', 'audio_nlp', 'v1.8.0', 4560, 0.84, 'speech_analysis', '{"speakers": 1, "voice_distorted": true, "keywords": ["500mila", "48 ore", "non chiamare polizia"], "distortion_type": "pitch_shift", "original_voice_probability": 0.34}'),
+  -- Caso 17: Satellite
+  ((SELECT id FROM evidence WHERE file_name = 'satellite_area_01.tif' LIMIT 1), 'c0000000-0000-0000-0000-000000000017', 'satellite', 'v1.2.0', 12340, 0.87, 'anomaly_detection', '{"anomalies": [{"type": "terrain_change", "area_sqm": 4500, "confidence": 0.87}, {"type": "unauthorized_structure", "count": 2, "confidence": 0.82}], "resolution": "0.5m/px", "date_range": "2025-11 to 2026-01"}'),
+  -- Caso 17: Drone thermal
+  ((SELECT id FROM evidence WHERE file_name = 'drone_thermal.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000017', 'thermal', 'v1.5.0', 8900, 0.94, 'thermal_analysis', '{"hotspots": [{"lat": 41.076, "lng": 14.336, "temp_c": 62.4, "type": "chemical_waste"}, {"lat": 41.077, "lng": 14.335, "temp_c": 48.2, "type": "decomposition"}, {"lat": 41.075, "lng": 14.337, "temp_c": 55.1, "type": "chemical_waste"}], "ambient_temp_c": 12.3}'),
+  -- Caso 20: Network topology
+  ((SELECT id FROM evidence WHERE file_name = 'server_dump_metadata.json' LIMIT 1), 'c0000000-0000-0000-0000-000000000020', 'network_analysis', 'v1.0.0', 34560, 0.91, 'network_mapping', '{"nodes": 847, "edges": 3420, "communities": 12, "central_nodes": 5, "countries": 18, "ip_ranges": 1243}'),
+  -- Caso 21: Dashcam
+  ((SELECT id FROM evidence WHERE file_name = 'dashcam_portavalori.mp4' LIMIT 1), 'c0000000-0000-0000-0000-000000000021', 'yolov8', 'v8.1.0', 567, 0.95, 'object_detection', '{"detections": [{"class": "explosive_device", "confidence": 0.91}, {"class": "gun", "count": 3, "confidence": 0.95}, {"class": "mask", "count": 4, "confidence": 0.93}], "vehicles_detected": 3, "frame_count": 5600}'),
+  -- Caso 21: Satellite autostrada
+  ((SELECT id FROM evidence WHERE file_name = 'satellite_autostrada.tif' LIMIT 1), 'c0000000-0000-0000-0000-000000000021', 'satellite', 'v1.2.0', 9870, 0.82, 'anomaly_detection', '{"vehicles_blocked": 12, "roadblock_detected": true, "escape_vehicles": [{"direction": "SS67 est", "type": "SUV", "speed_est": "130km/h"}], "resolution": "0.3m/px"}');
