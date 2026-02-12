@@ -4,23 +4,35 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (password.length < 8) {
+      setError('La password deve avere almeno 8 caratteri');
+      return;
+    }
+    if (password !== confirm) {
+      setError('Le password non coincidono');
+      return;
+    }
+
     setLoading(true);
     try {
-      await api.login(email, password);
+      await api.register(email, password, name || undefined);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Registrazione fallita');
     } finally {
       setLoading(false);
     }
@@ -47,14 +59,25 @@ export default function LoginPage() {
           <p className="text-ci-muted text-sm md:text-base">Forensic Intelligence Platform v7.0 Ω</p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-ci-card border border-ci-border rounded-lg p-6 md:p-8 ci-glow">
-          <h2 className="text-lg md:text-xl font-semibold mb-5 md:mb-6">Accedi</h2>
+        <form onSubmit={handleRegister} className="bg-ci-card border border-ci-border rounded-lg p-6 md:p-8 ci-glow">
+          <h2 className="text-lg md:text-xl font-semibold mb-5 md:mb-6">Crea Account</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-ci-danger/10 border border-ci-danger/30 rounded text-ci-danger text-sm">
               {error}
             </div>
           )}
+
+          <div className="mb-4">
+            <label className="block text-sm text-ci-muted mb-1">Nome (opzionale)</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Mario Rossi"
+              className="w-full px-4 py-2.5 bg-ci-bg border border-ci-border rounded focus:border-ci-accent focus:outline-none transition text-ci-text"
+            />
+          </div>
 
           <div className="mb-4">
             <label className="block text-sm text-ci-muted mb-1">Email</label>
@@ -68,15 +91,29 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-sm text-ci-muted mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="La tua password"
+              placeholder="Minimo 8 caratteri"
               className="w-full px-4 py-2.5 bg-ci-bg border border-ci-border rounded focus:border-ci-accent focus:outline-none transition text-ci-text"
               required
+              minLength={8}
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm text-ci-muted mb-1">Conferma Password</label>
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="Ripeti la password"
+              className="w-full px-4 py-2.5 bg-ci-bg border border-ci-border rounded focus:border-ci-accent focus:outline-none transition text-ci-text"
+              required
+              minLength={8}
             />
           </div>
 
@@ -85,7 +122,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-2.5 bg-ci-accent hover:bg-ci-accent-hover active:bg-blue-700 text-white font-medium rounded transition disabled:opacity-50"
           >
-            {loading ? 'Accesso...' : 'Accedi'}
+            {loading ? 'Registrazione...' : 'Registrati'}
           </button>
 
           <div className="relative my-5">
@@ -103,9 +140,9 @@ export default function LoginPage() {
           </button>
 
           <p className="mt-5 text-sm text-ci-muted text-center">
-            Non hai un account?{' '}
-            <button type="button" onClick={() => router.push('/register')} className="text-ci-accent hover:underline font-medium">
-              Registrati
+            Hai già un account?{' '}
+            <button type="button" onClick={() => router.push('/login')} className="text-ci-accent hover:underline font-medium">
+              Accedi
             </button>
           </p>
         </form>

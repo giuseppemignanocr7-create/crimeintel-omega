@@ -27,4 +27,13 @@ export class AuthController {
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.password);
   }
+
+  @Post('demo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login as demo/guest user with full access' })
+  @ApiResponse({ status: 200, description: 'Demo login successful' })
+  @Throttle({ short: { ttl: 60000, limit: 20 } })
+  async demoLogin() {
+    return this.authService.demoLogin();
+  }
 }

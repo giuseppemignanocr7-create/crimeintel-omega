@@ -96,6 +96,45 @@ export class AuthService {
     };
   }
 
+  async demoLogin() {
+    const demoEmail = 'demo@crimeintel.com';
+    let user = await this.prisma.user.findUnique({ where: { email: demoEmail } });
+
+    if (!user) {
+      const hashedPassword = await bcrypt.hash('demo-guest-access', 12);
+      user = await this.prisma.user.create({
+        data: {
+          email: demoEmail,
+          password: hashedPassword,
+          name: 'Ospite Demo',
+          role: 'ADMIN',
+        },
+      });
+      this.logger.log('Demo user created');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    await this.prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: 'DEMO_LOGIN',
+        resource: 'auth',
+      },
+    });
+
+    const token = this.generateToken(user);
+    this.logger.log('Demo login');
+
+    return {
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      token,
+    };
+  }
+
   async validateUser(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId, isActive: true },

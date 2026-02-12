@@ -75,6 +75,14 @@ class ApiClient {
     return data.data;
   }
 
+  async demoLogin() {
+    const data = await this.request<{ data: { user: any; token: string } }>('/auth/demo', {
+      method: 'POST',
+    });
+    this.setToken(data.data.token);
+    return data.data;
+  }
+
   // Cases
   async getCases(params?: Record<string, string>) {
     const query = params ? '?' + new URLSearchParams(params).toString() : '';
