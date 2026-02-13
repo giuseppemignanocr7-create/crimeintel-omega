@@ -59,14 +59,14 @@ export default function HomePage() {
         </div>
 
         {/* Stat Cards */}
-        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6 md:mb-8 md:grid md:grid-cols-5 md:overflow-visible md:pb-0">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 md:gap-3 mb-6 md:mb-8">
           {statCards.map((s) => (
-            <div key={s.label} className="flex-shrink-0 w-36 md:w-auto bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 ci-glow">
+            <div key={s.label} className="bg-ci-card border border-ci-border rounded-lg p-3 md:p-5 ci-glow">
               <div className="flex items-center justify-between">
-                <p className="text-ci-muted text-xs md:text-sm whitespace-nowrap">{s.label}</p>
-                <span className="text-lg">{s.icon}</span>
+                <p className="text-ci-muted text-[10px] md:text-sm">{s.label}</p>
+                <span className="text-sm md:text-lg">{s.icon}</span>
               </div>
-              <p className={`text-2xl md:text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+              <p className={`text-xl md:text-3xl font-bold mt-0.5 md:mt-1 ${s.color}`}>{s.value}</p>
             </div>
           ))}
         </div>
@@ -204,15 +204,16 @@ export default function HomePage() {
             <h2 className="text-sm md:text-base font-semibold">Ultimi Casi Aggiornati</h2>
             <button onClick={() => router.push('/cases')} className="text-xs text-ci-accent hover:underline">Vedi Tutti →</button>
           </div>
-          <div className="overflow-x-auto">
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-ci-muted border-b border-ci-border">
                   <th className="pb-2 pr-4">Caso</th>
                   <th className="pb-2 pr-4">Titolo</th>
-                  <th className="pb-2 pr-4 hidden sm:table-cell">Status</th>
-                  <th className="pb-2 pr-4 hidden md:table-cell">Priorità</th>
-                  <th className="pb-2 hidden md:table-cell">Prove</th>
+                  <th className="pb-2 pr-4">Status</th>
+                  <th className="pb-2 pr-4">Priorità</th>
+                  <th className="pb-2">Prove</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,15 +221,34 @@ export default function HomePage() {
                   <tr key={c.id} onClick={() => router.push(`/cases/${c.id}`)} className="border-b border-ci-border/50 hover:bg-ci-bg/50 cursor-pointer transition">
                     <td className="py-2.5 pr-4 font-mono text-xs text-ci-muted">{c.caseNumber}</td>
                     <td className="py-2.5 pr-4 font-medium truncate max-w-[200px]">{c.title}</td>
-                    <td className={`py-2.5 pr-4 hidden sm:table-cell text-xs ${statusColor[c.status] || ''}`}>{c.status}</td>
-                    <td className="py-2.5 pr-4 hidden md:table-cell">
+                    <td className={`py-2.5 pr-4 text-xs ${statusColor[c.status] || ''}`}>{c.status}</td>
+                    <td className="py-2.5 pr-4">
                       <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${priorityColor[c.priority]}`} /><span className="text-xs">{c.priority}</span>
                     </td>
-                    <td className="py-2.5 hidden md:table-cell text-xs text-ci-muted">{c._count?.evidence || 0}</td>
+                    <td className="py-2.5 text-xs text-ci-muted">{c._count?.evidence || 0}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-2">
+            {recentCases.map(c => (
+              <button key={c.id} onClick={() => router.push(`/cases/${c.id}`)} className="w-full text-left bg-ci-bg rounded-lg border border-ci-border p-3 active:bg-ci-border/40 transition">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-mono text-ci-muted">{c.caseNumber}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${priorityColor[c.priority]}`} />
+                    <span className={`text-[10px] ${statusColor[c.status] || ''}`}>{c.status}</span>
+                  </div>
+                </div>
+                <p className="text-sm font-medium truncate">{c.title}</p>
+                <div className="flex items-center gap-3 mt-1 text-[10px] text-ci-muted">
+                  <span>{c._count?.evidence || 0} prove</span>
+                  <span>{c.priority}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 

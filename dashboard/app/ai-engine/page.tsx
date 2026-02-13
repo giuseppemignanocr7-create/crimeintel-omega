@@ -172,7 +172,7 @@ export default function AIEnginePage() {
             {Array.from({ length: globalStats.gpuCluster.total }, (_, i) => (
               <div key={i} className="bg-ci-bg border border-ci-border rounded-lg p-3 text-center">
                 <p className="text-xs text-ci-muted mb-1">GPU {i}</p>
-                <p className="text-lg font-bold text-green-400">NVIDIA A100</p>
+                <p className="text-sm md:text-lg font-bold text-green-400">NVIDIA A100</p>
                 <div className="h-2 bg-ci-card rounded-full mt-2 overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full" style={{ width: `${55 + Math.random() * 35}%` }} />
                 </div>

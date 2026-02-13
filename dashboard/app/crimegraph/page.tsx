@@ -92,7 +92,8 @@ export default function CrimeGraphPage() {
                   const fromNode = filteredNodes.findIndex(n => n.id === e.from);
                   const toNode = filteredNodes.findIndex(n => n.id === e.to);
                   if (fromNode === -1 || toNode === -1) return null;
-                  const cols = Math.min(filteredNodes.length, 5);
+                  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                  const cols = Math.min(filteredNodes.length, isMobile ? 3 : 5);
                   const fx = ((fromNode % cols) / (cols - 1 || 1)) * 85 + 7.5;
                   const fy = (Math.floor(fromNode / cols) / (Math.ceil(filteredNodes.length / cols) - 1 || 1)) * 80 + 10;
                   const tx = ((toNode % cols) / (cols - 1 || 1)) * 85 + 7.5;
@@ -109,7 +110,8 @@ export default function CrimeGraphPage() {
               </svg>
               {/* Nodes */}
               {filteredNodes.map((n, i) => {
-                const cols = Math.min(filteredNodes.length, 5);
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+                const cols = Math.min(filteredNodes.length, isMobile ? 3 : 5);
                 const x = ((i % cols) / (cols - 1 || 1)) * 85 + 7.5;
                 const y = (Math.floor(i / cols) / (Math.ceil(filteredNodes.length / cols) - 1 || 1)) * 80 + 10;
                 const isSelected = selectedNode === n.id;

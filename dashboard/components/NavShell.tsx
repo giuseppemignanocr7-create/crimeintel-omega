@@ -178,16 +178,48 @@ export function NavShell({ children, current }: { children: React.ReactNode; cur
       {sidebarOpen && (
         <div className="md:hidden fixed inset-0 z-50" onClick={() => setSidebarOpen(false)}>
           <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute left-0 top-0 h-full w-64 bg-ci-card border-r border-ci-border" onClick={e => e.stopPropagation()}>
+          <div className="absolute left-0 top-0 h-full w-72 bg-ci-card border-r border-ci-border" onClick={e => e.stopPropagation()}>
+            {/* Close button */}
+            <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-ci-bg border border-ci-border text-ci-muted hover:text-ci-text z-10" aria-label="Chiudi">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
             <SidebarContent mobile />
           </div>
         </div>
       )}
 
       {/* Main content */}
-      <div className={`flex-1 transition-all duration-200 ${collapsed ? 'md:ml-16' : 'md:ml-60'} mt-14 md:mt-0`}>
+      <div className={`flex-1 transition-all duration-200 ${collapsed ? 'md:ml-16' : 'md:ml-60'} mt-14 md:mt-0 pb-16 md:pb-0`}>
         {children}
       </div>
+
+      {/* Mobile bottom navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-ci-card/95 backdrop-blur-sm border-t border-ci-border">
+        <div className="flex items-stretch justify-around px-1 h-14">
+          {[
+            { href: '/', icon: '🏠', label: 'Home' },
+            { href: '/cases', icon: '📂', label: 'Casi' },
+            { href: '/search', icon: '🔍', label: 'Cerca' },
+            { href: '/ai-engine', icon: '🤖', label: 'AI' },
+            { href: '/analytics', icon: '📊', label: 'Stats' },
+          ].map(item => {
+            const active = current === item.href;
+            return (
+              <button
+                key={item.href}
+                onClick={() => navigate(item.href)}
+                className={`flex flex-col items-center justify-center flex-1 gap-0.5 transition-colors ${
+                  active ? 'text-ci-accent' : 'text-ci-muted'
+                }`}
+              >
+                <span className="text-lg leading-none">{item.icon}</span>
+                <span className={`text-[9px] leading-none ${active ? 'font-bold' : ''}`}>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="h-[env(safe-area-inset-bottom)]" />
+      </nav>
 
       {/* CrimeMind AI floating assistant */}
       <CrimeMind />

@@ -242,7 +242,7 @@ export function CrimeMind() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        className={`fixed bottom-5 right-5 z-[60] w-14 h-14 rounded-full shadow-lg shadow-purple-500/30 flex items-center justify-center transition-all duration-300 ${
+        className={`fixed bottom-20 md:bottom-5 right-4 md:right-5 z-[60] w-12 h-12 md:w-14 md:h-14 rounded-full shadow-lg shadow-purple-500/30 flex items-center justify-center transition-all duration-300 ${
           open ? 'bg-ci-card border-2 border-purple-500 rotate-0 scale-95' : 'bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 scale-100'
         } ${pulse && !open ? 'animate-bounce' : ''}`}
         aria-label="CrimeMind AI"
@@ -258,12 +258,12 @@ export function CrimeMind() {
 
       {/* Notification dot */}
       {!open && pulse && (
-        <span className="fixed bottom-14 right-5 z-[61] w-3 h-3 bg-green-500 rounded-full border-2 border-ci-bg animate-pulse" />
+        <span className="fixed bottom-[5.25rem] md:bottom-14 right-4 md:right-5 z-[61] w-3 h-3 bg-green-500 rounded-full border-2 border-ci-bg animate-pulse" />
       )}
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-24 right-5 z-[60] w-[360px] max-w-[calc(100vw-40px)] h-[520px] max-h-[calc(100vh-120px)] bg-ci-card border border-ci-border rounded-2xl shadow-2xl shadow-purple-500/10 flex flex-col overflow-hidden">
+        <div className="fixed bottom-[5.5rem] md:bottom-24 right-2 md:right-5 z-[60] w-[360px] max-w-[calc(100vw-16px)] md:max-w-[calc(100vw-40px)] h-[420px] md:h-[520px] max-h-[calc(100vh-120px)] bg-ci-card border border-ci-border rounded-2xl shadow-2xl shadow-purple-500/10 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-purple-600/20 to-purple-800/20 border-b border-ci-border px-4 py-3 flex items-center gap-3 flex-shrink-0">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-lg shadow">

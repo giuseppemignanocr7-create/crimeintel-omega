@@ -250,7 +250,8 @@ export default function CompetitorsPage() {
 
         {view === 'features' && (
           <div className="bg-ci-card border border-ci-border rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-ci-bg text-xs text-ci-muted">
@@ -286,8 +287,45 @@ export default function CompetitorsPage() {
                 </tbody>
               </table>
             </div>
+            {/* Mobile cards per category */}
+            <div className="md:hidden p-3 space-y-4">
+              {categories.map(cat => (
+                <div key={cat}>
+                  <p className="text-[10px] font-bold text-ci-muted uppercase tracking-wider mb-2">{cat}</p>
+                  <div className="space-y-1.5">
+                    {FEATURES.filter(f => f.cat === cat).map(f => (
+                      <div key={f.name} className="bg-ci-bg border border-ci-border rounded-lg p-2.5">
+                        <p className="text-xs font-medium mb-1.5">{f.name}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {KEYS.map((k, i) => (
+                            <span key={k} className={`text-[9px] px-1.5 py-0.5 rounded ${f[k] ? (i === 0 ? 'bg-green-500/20 text-green-400 font-bold' : 'bg-green-500/10 text-green-400/70') : 'bg-ci-card text-ci-muted/40'}`}>
+                              {f[k] ? '✓' : '✗'} {NAMES[i]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {/* Totals */}
+              <div className="bg-ci-bg border border-ci-border rounded-lg p-3">
+                <p className="text-xs font-bold mb-2">Totale Features</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {KEYS.map((_, i) => {
+                    const c = featureCount(i);
+                    return (
+                      <div key={i} className="text-center">
+                        <p className={`text-sm font-black ${i === 0 ? 'text-green-400' : c < ciFeatures ? 'text-red-400' : 'text-ci-text'}`}>{c}/{FEATURES.length}</p>
+                        <p className="text-[9px] text-ci-muted">{NAMES[i]}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
             <div className="p-4 bg-green-500/5 border-t border-green-500/20">
-              <p className="text-sm text-green-400 font-bold text-center">
+              <p className="text-xs md:text-sm text-green-400 font-bold text-center">
                 🏆 CrimeIntel {ciFeatures}/{FEATURES.length} features ({Math.round(ciFeatures / FEATURES.length * 100)}%) — Miglior competitor: {Math.max(...COMPETITORS.slice(1).map((_, i) => featureCount(i + 1)))}
               </p>
             </div>

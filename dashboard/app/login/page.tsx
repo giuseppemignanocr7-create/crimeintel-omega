@@ -159,7 +159,7 @@ export default function LoginPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold text-sm">{a.name}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${a.badge}`}>{a.role}</span>
-                        <span className="text-[10px] text-ci-muted hidden sm:inline">{a.dept}</span>
+                        <span className="text-[10px] text-ci-muted">{a.dept}</span>
                       </div>
                       <p className="text-xs text-ci-muted mt-0.5">{a.desc}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">

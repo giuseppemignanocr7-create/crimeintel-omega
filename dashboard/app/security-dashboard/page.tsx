@@ -152,9 +152,9 @@ export default function SecurityDashboardPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-3">
               {SECURITY_MODULES.map(m => (
-                <div key={m.id} className="bg-ci-card border border-ci-border rounded-lg p-4 flex items-center gap-3">
+                <div key={m.id} className="bg-ci-card border border-ci-border rounded-lg p-3 md:p-4 flex items-center gap-2 md:gap-3">
                   <span className="text-2xl">{m.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
