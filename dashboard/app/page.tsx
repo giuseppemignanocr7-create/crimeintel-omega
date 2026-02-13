@@ -53,8 +53,8 @@ export default function HomePage() {
             <h1 className="text-xl md:text-3xl font-bold">Command Center</h1>
             <p className="text-ci-muted text-xs md:text-sm mt-1">CrimeIntel 7.0 Omega — Forensic Intelligence Platform</p>
           </div>
-          <div className="hidden md:flex gap-2">
-            <button onClick={() => router.push('/cases')} className="px-4 py-2 bg-ci-accent hover:bg-ci-accent-hover text-white rounded text-sm transition">+ Nuovo Caso</button>
+          <div className="flex gap-2">
+            <button onClick={() => router.push('/cases')} className="px-3 md:px-4 py-2 bg-ci-accent hover:bg-ci-accent-hover text-white rounded text-xs md:text-sm transition">+ Nuovo Caso</button>
           </div>
         </div>
 

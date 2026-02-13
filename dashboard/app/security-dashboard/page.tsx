@@ -77,7 +77,7 @@ export default function SecurityDashboardPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const runHash = () => {
     if (!hashDemo.trim()) return;
@@ -202,7 +202,8 @@ export default function SecurityDashboardPage() {
               <h2 className="font-bold text-sm">👤 Role-Based Access Control Matrix</h2>
               <p className="text-[10px] text-ci-muted">5 ruoli × 20 permessi = matrice accesso completa</p>
             </div>
-            <div className="overflow-x-auto">
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-ci-bg text-ci-muted">
@@ -236,6 +237,36 @@ export default function SecurityDashboardPage() {
                 </tfoot>
               </table>
             </div>
+            {/* Mobile cards */}
+            <div className="md:hidden p-3 space-y-3">
+              {ROLES.map(r => {
+                const perms = ALL_PERMISSIONS.filter(p => RBAC.hasPermission(r, p));
+                const denied = ALL_PERMISSIONS.filter(p => !RBAC.hasPermission(r, p));
+                return (
+                  <div key={r} className="bg-ci-bg border border-ci-border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-sm">{r}</span>
+                      <span className="text-xs text-ci-accent font-bold">{perms.length}/{ALL_PERMISSIONS.length}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mb-1.5">
+                      {perms.map(p => (
+                        <span key={p} className="text-[9px] px-1.5 py-0.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded font-mono">✓ {p}</span>
+                      ))}
+                    </div>
+                    {denied.length > 0 && (
+                      <details className="text-[9px] text-ci-muted">
+                        <summary className="cursor-pointer hover:text-ci-text">{denied.length} negati</summary>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {denied.map(p => (
+                            <span key={p} className="px-1.5 py-0.5 bg-red-500/5 border border-ci-border text-red-400/50 rounded font-mono">✗ {p}</span>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -243,20 +274,20 @@ export default function SecurityDashboardPage() {
           <div className="space-y-4">
             <div className="bg-ci-card border border-ci-border rounded-lg p-5">
               <h3 className="font-bold text-sm mb-3">🔗 Hash Engine (SHA-512 + HMAC-256)</h3>
-              <div className="flex gap-2 mb-3">
+              <div className="flex flex-col sm:flex-row gap-2 mb-3">
                 <input value={hashDemo} onChange={e => setHashDemo(e.target.value)} placeholder="Inserisci testo da hashare..."
                   className="flex-1 bg-ci-bg border border-ci-border rounded px-3 py-2 text-sm" />
-                <button onClick={runHash} className="px-4 py-2 bg-ci-accent text-white rounded text-sm font-medium hover:bg-ci-accent/80">Hash</button>
+                <button onClick={runHash} className="w-full sm:w-auto px-4 py-2 bg-ci-accent text-white rounded text-sm font-medium hover:bg-ci-accent/80">Hash</button>
               </div>
               {hashResult && <pre className="bg-ci-bg rounded p-3 text-[10px] font-mono text-green-400 whitespace-pre-wrap break-all">{hashResult}</pre>}
             </div>
 
             <div className="bg-ci-card border border-ci-border rounded-lg p-5">
               <h3 className="font-bold text-sm mb-3">🔐 Encryption Engine (AES-256-CBC)</h3>
-              <div className="flex gap-2 mb-3">
+              <div className="flex flex-col sm:flex-row gap-2 mb-3">
                 <input value={encryptDemo} onChange={e => setEncryptDemo(e.target.value)} placeholder="Inserisci testo da cifrare..."
                   className="flex-1 bg-ci-bg border border-ci-border rounded px-3 py-2 text-sm" />
-                <button onClick={runEncrypt} className="px-4 py-2 bg-purple-600 text-white rounded text-sm font-medium hover:bg-purple-700">Encrypt</button>
+                <button onClick={runEncrypt} className="w-full sm:w-auto px-4 py-2 bg-purple-600 text-white rounded text-sm font-medium hover:bg-purple-700">Encrypt</button>
               </div>
               {encryptResult && <pre className="bg-ci-bg rounded p-3 text-[10px] font-mono text-purple-400 whitespace-pre-wrap break-all">{encryptResult}</pre>}
             </div>

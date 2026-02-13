@@ -16,7 +16,7 @@ export default function SettingsPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const { encryption, compliance, infrastructure, rbac } = DEMO_SYSTEM;
 
@@ -120,7 +120,8 @@ export default function SettingsPage() {
         {/* RBAC */}
         <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
           <h2 className="text-sm md:text-base font-semibold mb-4 flex items-center gap-2">🛡️ Role-Based Access Control (RBAC)</h2>
-          <div className="overflow-x-auto">
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-ci-muted bg-ci-bg">
@@ -149,6 +150,22 @@ export default function SettingsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {rbac.roles.map(r => (
+              <div key={r.name} className="bg-ci-bg border border-ci-border rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-sm">{r.name}</span>
+                  <span className="text-xs text-ci-accent font-bold">{r.users} utenti</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {r.permissions.map(p => (
+                    <span key={p} className="text-[10px] px-1.5 py-0.5 bg-ci-card border border-ci-border rounded-full font-mono">{p}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

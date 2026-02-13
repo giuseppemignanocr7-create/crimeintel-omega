@@ -18,7 +18,7 @@ export default function CrimeGraphPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const { nodes, edges, stats } = DEMO_CRIMEGRAPH;
   const types = [...new Set(nodes.map(n => n.type))];
@@ -52,7 +52,7 @@ export default function CrimeGraphPage() {
         <p className="text-ci-muted text-xs md:text-sm mb-5">Grafo investigativo Neo4j — Entità, relazioni e community detection</p>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 mb-5">
           {[
             { label: 'Nodi', value: stats.totalNodes, color: 'text-ci-accent' },
             { label: 'Relazioni', value: stats.totalEdges, color: 'text-purple-400' },
@@ -85,9 +85,9 @@ export default function CrimeGraphPage() {
           <div className="lg:col-span-2 bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
             <h2 className="text-sm font-semibold mb-4">Mappa Relazioni</h2>
             {/* CSS-based graph layout */}
-            <div className="relative w-full" style={{ minHeight: '420px' }}>
+            <div className="relative w-full" style={{ minHeight: '320px' }}>
               {/* Edges as SVG */}
-              <svg className="absolute inset-0 w-full h-full" style={{ minHeight: '420px' }}>
+              <svg className="absolute inset-0 w-full h-full" style={{ minHeight: '320px' }}>
                 {filteredEdges.map((e, i) => {
                   const fromNode = filteredNodes.findIndex(n => n.id === e.from);
                   const toNode = filteredNodes.findIndex(n => n.id === e.to);
@@ -122,7 +122,7 @@ export default function CrimeGraphPage() {
                     className={`absolute transform -translate-x-1/2 -translate-y-1/2 border-2 rounded-xl px-2 py-1.5 text-center transition-all z-10 ${typeColor[n.type] || 'border-ci-border bg-ci-bg'} ${
                       isSelected ? 'scale-110 shadow-lg ring-2 ring-ci-accent/50' : 'hover:scale-105'
                     } ${dim ? 'opacity-20' : ''}`}
-                    style={{ left: `${x}%`, top: `${y}%`, minWidth: '80px' }}
+                    style={{ left: `${x}%`, top: `${y}%`, minWidth: '64px', maxWidth: '100px' }}
                   >
                     <span className="text-lg block">{typeIcon[n.type]}</span>
                     <p className="text-[10px] font-medium truncate max-w-[90px]">{n.label}</p>

@@ -16,7 +16,7 @@ export default function PredictivePage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const { hotZones, riskScoring, patterns, predictions } = DEMO_PREDICTIVE;
   const sevColor: Record<string, string> = { CRITICAL: 'bg-red-500/20 text-red-400', HIGH: 'bg-orange-500/20 text-orange-400', MEDIUM: 'bg-yellow-500/20 text-yellow-400', LOW: 'bg-blue-500/20 text-blue-400' };

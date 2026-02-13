@@ -18,7 +18,7 @@ export default function ReportsPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const types = [...new Set(DEMO_REPORTS.map(r => r.type))];
   let reports = [...DEMO_REPORTS];

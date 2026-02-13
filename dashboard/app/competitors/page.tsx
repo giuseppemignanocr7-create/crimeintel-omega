@@ -120,7 +120,7 @@ export default function CompetitorsPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const ci = COMPETITORS[0];
   const others = COMPETITORS.slice(1);
@@ -306,7 +306,7 @@ export default function CompetitorsPage() {
                       const best = b.lower ? (v > 0 && v === Math.min(...b.vals.filter(x => x > 0))) : v === max;
                       return (
                         <div key={NAMES[i]} className="flex items-center gap-3">
-                          <span className={`text-xs w-24 flex-shrink-0 ${i === 0 ? 'font-bold text-ci-accent' : 'text-ci-muted'}`}>{NAMES[i]}</span>
+                          <span className={`text-[10px] md:text-xs w-16 md:w-24 flex-shrink-0 truncate ${i === 0 ? 'font-bold text-ci-accent' : 'text-ci-muted'}`}>{NAMES[i]}</span>
                           <div className="flex-1 h-6 bg-ci-bg rounded-full overflow-hidden relative">
                             {v > 0 ? (
                               <div className={`h-full rounded-full flex items-center justify-end pr-2 ${i === 0 ? 'bg-gradient-to-r from-ci-accent to-green-500' : best ? 'bg-green-500/40' : 'bg-ci-border'}`}

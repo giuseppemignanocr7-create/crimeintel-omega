@@ -41,10 +41,13 @@ const NAV_SECTIONS = [
   },
 ];
 
+const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items);
+
 export function NavShell({ children, current }: { children: React.ReactNode; current: string }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const currentLabel = ALL_NAV_ITEMS.find(i => i.href === current)?.label || '';
 
   const navigate = (href: string) => {
     router.push(href);
@@ -146,15 +149,28 @@ export function NavShell({ children, current }: { children: React.ReactNode; cur
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-ci-card/95 backdrop-blur-sm border-b border-ci-border px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button onClick={() => setSidebarOpen(true)} className="p-1 -ml-1" aria-label="Menu">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-ci-card/95 backdrop-blur-sm border-b border-ci-border px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0">
+          <button onClick={() => setSidebarOpen(true)} className="p-1 -ml-1 flex-shrink-0" aria-label="Menu">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-ci-text">
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
           </button>
-          <span className="text-lg font-bold text-ci-accent">CrimeIntel</span>
-          <span className="text-[10px] bg-ci-accent/20 text-ci-accent px-1.5 py-0.5 rounded">7.0 Ω</span>
+          <span className="text-base font-bold text-ci-accent flex-shrink-0">CI</span>
+          {currentLabel && (
+            <>
+              <span className="text-ci-muted text-xs">/</span>
+              <span className="text-xs font-medium text-ci-text truncate">{currentLabel}</span>
+            </>
+          )}
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {api.getToken() === 'demo-offline-token' && (
+            <span className="text-[9px] bg-purple-600/20 text-purple-400 px-1.5 py-0.5 rounded font-bold">DEMO</span>
+          )}
+          <div className="w-7 h-7 rounded-full bg-ci-accent/20 flex items-center justify-center text-ci-accent font-bold text-[10px]">
+            {(api.getCurrentDemoUser()?.name || 'U').charAt(0)}
+          </div>
         </div>
       </div>
 

@@ -17,7 +17,7 @@ export default function AIEnginePage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
 
   const { modules, globalStats } = DEMO_AI_ENGINE;
   const totalProcessed = modules.reduce((s, m) => s + m.totalProcessed, 0);
@@ -35,7 +35,7 @@ export default function AIEnginePage() {
         <p className="text-ci-muted text-xs md:text-sm mb-5">7 moduli AI attivi — Monitoraggio in tempo reale</p>
 
         {/* Global Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 mb-6">
           {[
             { label: 'Inferenze Totali', value: totalProcessed.toLocaleString(), color: 'text-ci-accent' },
             { label: 'Oggi', value: todayTotal.toLocaleString(), color: 'text-green-400' },

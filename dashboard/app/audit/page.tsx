@@ -95,8 +95,8 @@ export default function AuditPage() {
           </select>
         </div>
 
-        {/* Log entries */}
-        <div className="bg-ci-card border border-ci-border rounded-lg overflow-hidden">
+        {/* Log entries — Desktop table */}
+        <div className="hidden md:block bg-ci-card border border-ci-border rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -104,7 +104,7 @@ export default function AuditPage() {
                   <th className="px-4 py-3">Data</th>
                   <th className="px-4 py-3">Utente</th>
                   <th className="px-4 py-3">Azione</th>
-                  <th className="px-4 py-3 hidden md:table-cell">Risorsa</th>
+                  <th className="px-4 py-3">Risorsa</th>
                   <th className="px-4 py-3 hidden lg:table-cell">Dettagli</th>
                 </tr>
               </thead>
@@ -125,7 +125,7 @@ export default function AuditPage() {
                         {l.action}
                       </span>
                     </td>
-                    <td className="px-4 py-3 hidden md:table-cell text-xs text-ci-muted font-mono">{l.resource}{l.targetId ? ` / ${l.targetId.substring(0, 8)}` : ''}</td>
+                    <td className="px-4 py-3 text-xs text-ci-muted font-mono">{l.resource}{l.targetId ? ` / ${l.targetId.substring(0, 8)}` : ''}</td>
                     <td className="px-4 py-3 hidden lg:table-cell text-xs text-ci-muted max-w-[200px] truncate">
                       {l.details ? JSON.stringify(l.details).substring(0, 60) : '—'}
                     </td>
@@ -134,6 +134,35 @@ export default function AuditPage() {
               </tbody>
             </table>
           </div>
+          {logs.length === 0 && (
+            <div className="text-center py-8 text-ci-muted text-sm">Nessun risultato per i filtri selezionati</div>
+          )}
+        </div>
+
+        {/* Log entries — Mobile cards */}
+        <div className="md:hidden space-y-2">
+          {logs.map(l => (
+            <div key={l.id} className="bg-ci-card border border-ci-border rounded-lg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${actionColor[l.action] || 'bg-ci-border text-ci-text'}`}>
+                  <span>{actionIcon[l.action] || '📌'}</span>
+                  {l.action}
+                </span>
+                <span className="text-[10px] text-ci-muted">{new Date(l.createdAt).toLocaleDateString('it-IT')} {new Date(l.createdAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded-full bg-ci-accent/20 flex items-center justify-center text-ci-accent font-bold text-[10px] flex-shrink-0">{l.user.name.charAt(0)}</div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium truncate">{l.user.name}</p>
+                  <p className="text-[10px] text-ci-muted truncate">{l.user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-ci-muted">
+                <span className="font-mono">{l.resource}{l.targetId ? ` / ${l.targetId.substring(0, 8)}` : ''}</span>
+                {l.details && <span className="truncate max-w-[150px]">{JSON.stringify(l.details).substring(0, 40)}</span>}
+              </div>
+            </div>
+          ))}
           {logs.length === 0 && (
             <div className="text-center py-8 text-ci-muted text-sm">Nessun risultato per i filtri selezionati</div>
           )}
