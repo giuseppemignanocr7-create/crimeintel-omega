@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY?.trim() });
 
 const SYSTEM_PROMPT = `Sei **CrimeMind**, l'assistente AI investigativo della piattaforma CrimeIntel 7.0 Omega.
 Sei un esperto di intelligence criminale, analisi forense, investigazioni e sicurezza.

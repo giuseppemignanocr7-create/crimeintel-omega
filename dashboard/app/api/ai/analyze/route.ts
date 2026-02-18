@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY?.trim() });
 
 const SYSTEM_PROMPT = `Sei un analista investigativo AI senior della piattaforma CrimeIntel 7.0 Omega.
 Il tuo compito è fornire analisi forensi approfondite, correlazioni tra prove, valutazioni di rischio e raccomandazioni operative.
