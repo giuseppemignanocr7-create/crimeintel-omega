@@ -45,7 +45,7 @@ export default function RegisterPage() {
       await api.demoLogin();
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Demo login failed');
+      setError(err instanceof Error ? err.message : 'Accesso demo fallito');
     } finally {
       setDemoLoading(false);
     }
@@ -56,7 +56,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-ci-accent mb-2">CrimeIntel</h1>
-          <p className="text-ci-muted text-sm md:text-base">Forensic Intelligence Platform v7.0 Ω</p>
+          <p className="text-ci-muted text-sm md:text-base">Piattaforma Intelligence Forense v7.0 Ω</p>
         </div>
 
         <form onSubmit={handleRegister} className="bg-ci-card border border-ci-border rounded-lg p-6 md:p-8 ci-glow">

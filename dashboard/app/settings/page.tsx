@@ -16,7 +16,7 @@ export default function SettingsPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Caricamento...</div></div>;
 
   const { encryption, compliance, infrastructure, rbac } = DEMO_SYSTEM;
 

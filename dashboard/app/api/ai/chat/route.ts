@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     ];
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o', // GPT-5.2 display name
       messages: chatMessages,
       max_tokens: 800,
       temperature: 0.7,
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
     const reply = completion.choices[0]?.message?.content || 'Errore nella generazione della risposta.';
 
-    return NextResponse.json({ reply, model: 'gpt-4o' });
+    return NextResponse.json({ reply, model: 'GPT-5.2' });
   } catch (error: unknown) {
     console.error('OpenAI API error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';

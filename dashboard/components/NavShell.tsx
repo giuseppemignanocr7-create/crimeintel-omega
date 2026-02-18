@@ -9,7 +9,7 @@ const NAV_SECTIONS = [
   {
     title: 'Principale',
     items: [
-      { href: '/', label: 'Command Center', icon: '🏠' },
+      { href: '/', label: 'Centro Operativo', icon: '🏠' },
       { href: '/cases', label: 'Gestione Casi', icon: '📂' },
       { href: '/search', label: 'NeuroSearch', icon: '🔍' },
     ],
@@ -17,26 +17,26 @@ const NAV_SECTIONS = [
   {
     title: 'AI & Analisi',
     items: [
-      { href: '/ai-engine', label: 'AI Engine', icon: '🤖' },
+      { href: '/ai-engine', label: 'Motore AI', icon: '🤖' },
       { href: '/crimegraph', label: 'CrimeGraph', icon: '🕸️' },
-      { href: '/predictive', label: 'Predictive Intel', icon: '🔮' },
+      { href: '/predictive', label: 'Intelligence Predittiva', icon: '🔮' },
       { href: '/analytics', label: 'Analytics', icon: '📊' },
     ],
   },
   {
     title: 'Documentazione',
     items: [
-      { href: '/reports', label: 'Report Center', icon: '📄' },
-      { href: '/competitors', label: 'Competitive Intel', icon: '⚔️' },
+      { href: '/reports', label: 'Centro Report', icon: '📄' },
+      { href: '/competitors', label: 'Intelligence Competitiva', icon: '⚔️' },
     ],
   },
   {
     title: 'Amministrazione',
     items: [
-      { href: '/audit', label: 'Audit Log', icon: '📋' },
+      { href: '/audit', label: 'Registro Audit', icon: '📋' },
       { href: '/users', label: 'Gestione Utenti', icon: '👥' },
       { href: '/settings', label: 'Sistema & Sicurezza', icon: '🔐' },
-      { href: '/security-dashboard', label: 'Security Center', icon: '🛡️' },
+      { href: '/security-dashboard', label: 'Centro Sicurezza', icon: '🛡️' },
     ],
   },
 ];
@@ -101,7 +101,7 @@ export function NavShell({ children, current }: { children: React.ReactNode; cur
       {/* Demo mode banner */}
       {api.getToken() === 'demo-offline-token' && (!collapsed || mobile) && (
         <div className="mx-2 mb-1 px-3 py-1.5 bg-purple-600/15 border border-purple-500/30 rounded text-center">
-          <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Demo Mode</p>
+          <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Modalità Demo</p>
         </div>
       )}
 
@@ -126,7 +126,7 @@ export function NavShell({ children, current }: { children: React.ReactNode; cur
           }`}
         >
           <span>🚪</span>
-          {(!collapsed || mobile) && <span>Logout</span>}
+          {(!collapsed || mobile) && <span>Esci</span>}
         </button>
       </div>
     </div>

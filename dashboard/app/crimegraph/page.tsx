@@ -18,7 +18,7 @@ export default function CrimeGraphPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Caricamento...</div></div>;
 
   const { nodes, edges, stats } = DEMO_CRIMEGRAPH;
   const types = [...new Set(nodes.map(n => n.type))];

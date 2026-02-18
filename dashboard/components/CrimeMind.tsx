@@ -32,13 +32,13 @@ export function CrimeMind() {
     {
       id: 'welcome',
       role: 'ai',
-      text: 'Ciao! Sono **CrimeMind**, il tuo assistente AI investigativo powered by **GPT-4o**.\n\nPosso analizzare casi, correlare prove, generare profili criminali, valutare minacce e molto altro.\n\nScrivimi qualsiasi cosa in linguaggio naturale! 🧠',
+      text: 'Ciao! Sono **CrimeMind**, il tuo assistente AI investigativo powered by **GPT-5.2**.\n\nPosso analizzare casi, correlare prove, generare profili criminali, valutare minacce e molto altro.\n\nScrivimi qualsiasi cosa in linguaggio naturale! 🧠',
       timestamp: new Date(),
     },
   ]);
   const [typing, setTyping] = useState(false);
   const [pulse, setPulse] = useState(true);
-  const [aiMode, setAiMode] = useState<'gpt4o' | 'offline'>('gpt4o');
+  const [aiMode, setAiMode] = useState<'gpt52' | 'offline'>('gpt52');
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -69,7 +69,7 @@ export function CrimeMind() {
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      setAiMode('gpt4o');
+      setAiMode('gpt52');
       return data.reply as string;
     } catch (err) {
       console.error('GPT-4o error, falling back:', err);
@@ -112,7 +112,7 @@ export function CrimeMind() {
     }
 
     if (q === '/aiuto' || q === 'aiuto' || q === 'help') {
-      addMsg('ai', '💡 **CrimeMind AI — Powered by GPT-4o**\n\nPuoi chiedermi qualsiasi cosa in linguaggio naturale:\n\n• 🔍 **"Analizza il caso rapina Milano"** — analisi investigativa AI\n• 🧠 **"Quali pattern vedi tra i casi attivi?"** — correlazioni\n• 🕵️ **"Crea un profilo criminale"** — profilazione AI\n• ⚠️ **"Valutazione minacce"** — threat assessment\n• 📊 **"Statistiche piattaforma"** — dati real-time\n• 🗺️ **"Casi per zona geografica"** — distribuzione\n• 🧭 **"Vai a [pagina]"** — navigazione\n\nScrivi liberamente, capisco il contesto! 🇮🇹');
+      addMsg('ai', '💡 **CrimeMind AI — Powered by GPT-5.2**\n\nPuoi chiedermi qualsiasi cosa in linguaggio naturale:\n\n• 🔍 **"Analizza il caso rapina Milano"** — analisi investigativa AI\n• 🧠 **"Quali pattern vedi tra i casi attivi?"** — correlazioni\n• 🕵️ **"Crea un profilo criminale"** — profilazione AI\n• ⚠️ **"Valutazione minacce"** — threat assessment\n• 📊 **"Statistiche piattaforma"** — dati real-time\n• 🗺️ **"Casi per zona geografica"** — distribuzione\n• 🧭 **"Vai a [pagina]"** — navigazione\n\nScrivi liberamente, capisco il contesto! 🇮🇹');
       return;
     }
 
@@ -177,13 +177,13 @@ export function CrimeMind() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-bold text-ci-text">CrimeMind AI</p>
-                <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${aiMode === 'gpt4o' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                  {aiMode === 'gpt4o' ? 'GPT-4o' : 'OFFLINE'}
+                <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${aiMode === 'gpt52' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                  {aiMode === 'gpt52' ? 'GPT-5.2' : 'OFFLINE'}
                 </span>
               </div>
-              <p className="text-[10px] text-purple-400">Assistente Investigativo AI • {aiMode === 'gpt4o' ? 'Live' : 'Locale'}</p>
+              <p className="text-[10px] text-purple-400">Assistente Investigativo AI • {aiMode === 'gpt52' ? 'Live' : 'Locale'}</p>
             </div>
-            <span className={`w-2 h-2 rounded-full animate-pulse ${aiMode === 'gpt4o' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+            <span className={`w-2 h-2 rounded-full animate-pulse ${aiMode === 'gpt52' ? 'bg-green-500' : 'bg-yellow-500'}`} />
           </div>
 
           {/* Messages */}

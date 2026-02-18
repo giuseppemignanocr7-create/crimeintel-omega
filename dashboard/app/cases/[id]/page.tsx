@@ -55,7 +55,7 @@ export default function CaseDetailPage() {
       setUploadFile(null);
       loadCase();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Upload failed');
+      alert(err instanceof Error ? err.message : 'Caricamento fallito');
     } finally {
       setUploading(false);
     }
@@ -67,7 +67,7 @@ export default function CaseDetailPage() {
       const res = await api.runFusion(id);
       setFusion(res.data);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Fusion failed');
+      alert(err instanceof Error ? err.message : 'Fusione fallita');
     } finally {
       setFusionLoading(false);
     }
@@ -76,9 +76,9 @@ export default function CaseDetailPage() {
   const handleGenerateReport = async (type: string) => {
     try {
       const res = await api.generateReport(id, type);
-      alert(`Report generated: ${res.data.id}`);
+      alert(`Report generato: ${res.data.id}`);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Report generation failed');
+      alert(err instanceof Error ? err.message : 'Generazione report fallita');
     }
   };
 
@@ -158,11 +158,11 @@ export default function CaseDetailPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-accent">Loading case...</div></div>;
+    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-accent">Caricamento caso...</div></div>;
   }
 
   if (!caseData) {
-    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-danger">Case not found</div></div>;
+    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-danger">Caso non trovato</div></div>;
   }
 
   const typeIcon: Record<string, string> = { IMAGE: 'img', VIDEO: 'vid', AUDIO: 'aud', DOCUMENT: 'doc', PLATE: 'lpr' };
@@ -172,7 +172,7 @@ export default function CaseDetailPage() {
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">
         {/* Back button — mobile */}
         <button onClick={() => router.push('/cases')} className="md:hidden flex items-center gap-1 text-ci-muted text-sm mb-3 active:text-ci-text">
-          <span>←</span> Back to Cases
+          <span>←</span> Torna ai Casi
         </button>
 
         {/* Case header */}
@@ -182,16 +182,16 @@ export default function CaseDetailPage() {
             {caseData.description && <p className="text-ci-muted text-sm mt-1 line-clamp-3 md:line-clamp-none">{caseData.description}</p>}
             <div className="flex flex-wrap gap-2 md:gap-3 mt-2 text-sm">
               <span className="text-ci-warning">{caseData.status}</span>
-              <span className="text-ci-muted">Priority: {caseData.priority}</span>
+              <span className="text-ci-muted">Priorità: {caseData.priority}</span>
               {caseData.locationName && <span className="text-ci-muted truncate max-w-[200px] md:max-w-none">{caseData.locationName}</span>}
             </div>
           </div>
           <div className="flex flex-wrap gap-2 flex-shrink-0">
             <button onClick={handleAiAnalysis} disabled={aiLoading} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded text-sm transition disabled:opacity-50 font-medium">
-              {aiLoading ? '🧠 Analisi...' : '🧠 AI Analysis'}
+              {aiLoading ? '🧠 Analisi...' : '🧠 Analisi AI'}
             </button>
             <button onClick={handleRunFusion} disabled={fusionLoading} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded text-sm transition disabled:opacity-50">
-              {fusionLoading ? 'Running...' : 'HyperFusion'}
+              {fusionLoading ? 'In corso...' : 'HyperFusion'}
             </button>
             <button onClick={() => handleGenerateReport('SUMMARY')} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-ci-card border border-ci-border rounded text-sm hover:bg-ci-border active:bg-gray-600 transition">
               Report
@@ -204,8 +204,8 @@ export default function CaseDetailPage() {
           <div className="bg-gradient-to-r from-green-500/5 to-emerald-500/5 border-2 border-green-500/30 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xl">🧠</span>
-              <h2 className="font-bold text-sm md:text-base text-green-400">AI Case Analysis</h2>
-              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Claude 3.5</span>
+              <h2 className="font-bold text-sm md:text-base text-green-400">Analisi AI del Caso</h2>
+              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Opus 4.6</span>
             </div>
             {aiLoading ? (
               <div className="flex items-center gap-3 py-4">
@@ -214,7 +214,7 @@ export default function CaseDetailPage() {
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <span className="text-sm text-ci-muted">Analisi AI in corso... Claude sta esaminando il caso</span>
+                <span className="text-sm text-ci-muted">Analisi AI in corso... Opus 4.6 sta esaminando il caso</span>
               </div>
             ) : (
               <div className="text-sm leading-relaxed text-ci-text" dangerouslySetInnerHTML={{ __html: renderMd(aiAnalysis || '') }} />
@@ -224,7 +224,7 @@ export default function CaseDetailPage() {
 
         {/* Evidence Upload */}
         <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
-          <h2 className="font-semibold mb-3 text-sm md:text-base">Upload Evidence</h2>
+          <h2 className="font-semibold mb-3 text-sm md:text-base">Carica Prove</h2>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
             <input
               type="file"
@@ -236,16 +236,16 @@ export default function CaseDetailPage() {
               disabled={!uploadFile || uploading}
               className="w-full sm:w-auto px-4 py-2.5 bg-ci-accent hover:bg-ci-accent-hover active:bg-blue-700 text-white rounded text-sm transition disabled:opacity-50"
             >
-              {uploading ? 'Uploading...' : 'Upload'}
+              {uploading ? 'Caricamento...' : 'Carica'}
             </button>
           </div>
         </div>
 
         {/* Evidence List */}
         <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
-          <h2 className="font-semibold mb-3 text-sm md:text-base">Evidence ({caseData.evidence?.length || 0})</h2>
+          <h2 className="font-semibold mb-3 text-sm md:text-base">Prove ({caseData.evidence?.length || 0})</h2>
           {caseData.evidence?.length === 0 ? (
-            <p className="text-ci-muted text-sm">No evidence uploaded yet</p>
+            <p className="text-ci-muted text-sm">Nessuna prova caricata</p>
           ) : (
             <div className="space-y-2">
               {caseData.evidence?.map((ev: any) => (
@@ -285,23 +285,23 @@ export default function CaseDetailPage() {
         {/* Fusion Results */}
         {fusion && (
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
-            <h2 className="font-semibold mb-3 text-sm md:text-base">HyperFusion Results</h2>
+            <h2 className="font-semibold mb-3 text-sm md:text-base">Risultati HyperFusion</h2>
             <div className="grid grid-cols-3 gap-2 md:gap-4 mb-4">
               <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
-                <p className="text-[10px] md:text-xs text-ci-muted">Score</p>
+                <p className="text-[10px] md:text-xs text-ci-muted">Punteggio</p>
                 <p className="text-lg md:text-2xl font-bold text-purple-400">{(fusion.fusionScore * 100).toFixed(0)}%</p>
               </div>
               <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
-                <p className="text-[10px] md:text-xs text-ci-muted">Confidence</p>
+                <p className="text-[10px] md:text-xs text-ci-muted">Confidenza</p>
                 <p className="text-lg md:text-2xl font-bold text-ci-accent">{(fusion.confidence * 100).toFixed(0)}%</p>
               </div>
               <div className="bg-ci-bg rounded p-2.5 md:p-3 text-center border border-ci-border">
-                <p className="text-[10px] md:text-xs text-ci-muted">Version</p>
+                <p className="text-[10px] md:text-xs text-ci-muted">Versione</p>
                 <p className="text-lg md:text-2xl font-bold text-ci-text">{fusion.version}</p>
               </div>
             </div>
             <details className="text-sm">
-              <summary className="cursor-pointer text-ci-muted hover:text-ci-text transition py-1">View Raw Fusion Data</summary>
+              <summary className="cursor-pointer text-ci-muted hover:text-ci-text transition py-1">Visualizza Dati Fusione Grezzi</summary>
               <pre className="mt-2 bg-ci-bg rounded p-3 overflow-auto text-xs max-h-48 md:max-h-64 border border-ci-border">{JSON.stringify(fusion.fusionData, null, 2)}</pre>
             </details>
           </div>
@@ -310,12 +310,12 @@ export default function CaseDetailPage() {
         {/* Reports */}
         {caseData.reports?.length > 0 && (
           <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5">
-            <h2 className="font-semibold mb-3 text-sm md:text-base">Reports ({caseData.reports.length})</h2>
+            <h2 className="font-semibold mb-3 text-sm md:text-base">Report ({caseData.reports.length})</h2>
             <div className="space-y-2">
               {caseData.reports.map((r: any) => (
                 <div key={r.id} className="flex items-center justify-between bg-ci-bg rounded p-3 border border-ci-border">
                   <div>
-                    <p className="text-sm font-medium">{r.type} Report</p>
+                    <p className="text-sm font-medium">Report {r.type}</p>
                     <p className="text-xs text-ci-muted">{new Date(r.createdAt).toLocaleString()}</p>
                   </div>
                   <span className="text-xs font-mono text-ci-muted hidden sm:block">{r.id.substring(0, 8)}</span>

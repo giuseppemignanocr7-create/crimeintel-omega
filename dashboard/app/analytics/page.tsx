@@ -16,7 +16,7 @@ export default function AnalyticsPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Caricamento...</div></div>;
 
   const a = DEMO_ANALYTICS;
   const maxMonth = Math.max(...a.casesPerMonth.map((m: any) => m.count));
@@ -37,7 +37,7 @@ export default function AnalyticsPage() {
   return (
     <NavShell current="/analytics">
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">
-        <h1 className="text-xl md:text-3xl font-bold mb-1">Analytics Dashboard</h1>
+        <h1 className="text-xl md:text-3xl font-bold mb-1">Pannello Analytics</h1>
         <p className="text-ci-muted text-xs md:text-sm mb-6">Panoramica statistiche e trend operativi</p>
 
         {/* KPI row */}

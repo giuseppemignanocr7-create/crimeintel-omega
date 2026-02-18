@@ -29,7 +29,7 @@ export default function LoginPage() {
       await api.login(email, password);
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Accesso fallito');
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ export default function LoginPage() {
       await api.demoLoginAs(role);
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Demo login failed');
+      setError(err instanceof Error ? err.message : 'Accesso demo fallito');
     } finally {
       setDemoLoading(null);
     }
@@ -54,7 +54,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-5">
           <h1 className="text-3xl md:text-4xl font-bold text-ci-accent mb-1">CrimeIntel</h1>
-          <p className="text-ci-muted text-sm">Forensic Intelligence Platform v7.0 Omega</p>
+          <p className="text-ci-muted text-sm">Piattaforma Intelligence Forense v7.0 Omega</p>
         </div>
 
         {/* Tab toggle */}

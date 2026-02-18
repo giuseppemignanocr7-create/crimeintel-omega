@@ -19,7 +19,7 @@ export default function SearchPage() {
       const res = await api.search(query);
       setResults(res.data);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Search failed');
+      alert(err instanceof Error ? err.message : 'Ricerca fallita');
     } finally {
       setLoading(false);
     }
@@ -29,7 +29,7 @@ export default function SearchPage() {
     <NavShell current="/search">
       <main className="max-w-5xl mx-auto px-4 md:px-6 py-5 md:py-8">
         <h1 className="text-xl md:text-2xl font-bold mb-1 md:mb-2">NeuroSearch</h1>
-        <p className="text-ci-muted text-xs md:text-sm mb-4 md:mb-6">Search across all evidence, AI results, cases, and metadata</p>
+        <p className="text-ci-muted text-xs md:text-sm mb-4 md:mb-6">Cerca tra prove, risultati AI, casi e metadati</p>
 
         {/* Search bar — stacks on mobile */}
         <div className="flex flex-col sm:flex-row gap-2 mb-6 md:mb-8">
@@ -38,7 +38,7 @@ export default function SearchPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Persons, plates, keywords, locations..."
+            placeholder="Persone, targhe, parole chiave, luoghi..."
             className="flex-1 px-3 md:px-4 py-3 bg-ci-card border border-ci-border rounded-lg focus:border-purple-500 focus:outline-none text-ci-text text-base md:text-lg"
           />
           <button
@@ -46,20 +46,20 @@ export default function SearchPage() {
             disabled={loading}
             className="w-full sm:w-auto px-6 py-3 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded-lg transition font-medium disabled:opacity-50"
           >
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? 'Ricerca...' : 'Cerca'}
           </button>
         </div>
 
         {results && (
           <div>
             <div className="flex items-center gap-2 md:gap-3 mb-4">
-              <span className="text-sm text-ci-muted">{results.totalResults} results</span>
-              <span className="text-xs text-ci-muted hidden sm:inline">Engine: {results.engineVersion}</span>
+              <span className="text-sm text-ci-muted">{results.totalResults} risultati</span>
+              <span className="text-xs text-ci-muted hidden sm:inline">Motore: {results.engineVersion}</span>
             </div>
 
             {results.results?.cases?.length > 0 && (
               <div className="mb-5 md:mb-6">
-                <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Cases ({results.results.cases.length})</h2>
+                <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Casi ({results.results.cases.length})</h2>
                 <div className="space-y-2">
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {results.results.cases.map((c: any) => (
@@ -74,7 +74,7 @@ export default function SearchPage() {
                       </div>
                       <h3 className="font-medium text-sm md:text-base">{c.title}</h3>
                       {c.description && <p className="text-sm text-ci-muted mt-1 line-clamp-1">{c.description}</p>}
-                      <span className="text-xs text-ci-muted mt-1">{c._count?.evidence || 0} evidence</span>
+                      <span className="text-xs text-ci-muted mt-1">{c._count?.evidence || 0} prove</span>
                     </div>
                   ))}
                 </div>
@@ -83,7 +83,7 @@ export default function SearchPage() {
 
             {results.results?.evidence?.length > 0 && (
               <div>
-                <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Evidence ({results.results.evidence.length})</h2>
+                <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-3">Prove ({results.results.evidence.length})</h2>
                 <div className="space-y-2">
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {results.results.evidence.map((ev: any) => (
@@ -105,7 +105,7 @@ export default function SearchPage() {
                             onClick={(e) => { e.stopPropagation(); router.push(`/cases/${ev.case.id}`); }}
                             className="text-xs text-ci-accent hover:text-ci-accent-hover active:text-blue-300 transition flex-shrink-0 py-1"
                           >
-                            View Case
+                            Vedi Caso
                           </button>
                         )}
                       </div>
@@ -117,8 +117,8 @@ export default function SearchPage() {
 
             {results.totalResults === 0 && (
               <div className="text-center text-ci-muted py-10 md:py-12">
-                <p className="text-base md:text-lg mb-2">No results for &quot;{query}&quot;</p>
-                <p className="text-sm">Try different keywords or check your spelling</p>
+                <p className="text-base md:text-lg mb-2">Nessun risultato per &quot;{query}&quot;</p>
+                <p className="text-sm">Prova parole chiave diverse o controlla l'ortografia</p>
               </div>
             )}
 
@@ -130,8 +130,8 @@ export default function SearchPage() {
 
         {!results && !loading && (
           <div className="text-center text-ci-muted py-12 md:py-16">
-            <p className="text-base md:text-lg mb-2">Enter a query to search</p>
-            <p className="text-xs md:text-sm">Search across all evidence files, AI analysis results, cases, and metadata</p>
+            <p className="text-base md:text-lg mb-2">Inserisci una query per cercare</p>
+            <p className="text-xs md:text-sm">Cerca tra prove, risultati analisi AI, casi e metadati</p>
           </div>
         )}
       </main>

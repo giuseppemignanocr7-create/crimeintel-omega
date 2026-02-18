@@ -17,7 +17,7 @@ export default function AIEnginePage() {
     setLoading(false);
   }, [router]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Loading...</div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent">Caricamento...</div></div>;
 
   const { modules, globalStats } = DEMO_AI_ENGINE;
   const totalProcessed = modules.reduce((s, m) => s + m.totalProcessed, 0);
@@ -31,7 +31,7 @@ export default function AIEnginePage() {
   return (
     <NavShell current="/ai-engine">
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-5 md:py-8">
-        <h1 className="text-xl md:text-3xl font-bold mb-1">AI Engine Dashboard</h1>
+        <h1 className="text-xl md:text-3xl font-bold mb-1">Pannello Motore AI</h1>
         <p className="text-ci-muted text-xs md:text-sm mb-5">7 moduli AI attivi — Monitoraggio in tempo reale</p>
 
         {/* Global Stats */}
@@ -72,11 +72,11 @@ export default function AIEnginePage() {
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-ci-bg rounded p-2">
-                  <p className="text-ci-muted text-[10px]">Accuracy</p>
+                  <p className="text-ci-muted text-[10px]">Precisione</p>
                   <p className="font-bold text-green-400">{(m.accuracy * 100).toFixed(1)}%</p>
                 </div>
                 <div className="bg-ci-bg rounded p-2">
-                  <p className="text-ci-muted text-[10px]">Inference</p>
+                  <p className="text-ci-muted text-[10px]">Inferenza</p>
                   <p className="font-bold text-yellow-400">{m.avgInference}ms</p>
                 </div>
                 <div className="bg-ci-bg rounded p-2">
@@ -123,8 +123,8 @@ export default function AIEnginePage() {
                 <h3 className="text-sm font-semibold mb-2">Performance</h3>
                 <div className="space-y-2">
                   {[
-                    { label: 'Accuracy', value: selectedModule.accuracy * 100, color: 'bg-green-500' },
-                    { label: 'GPU Usage', value: selectedModule.gpuUsage, color: 'bg-purple-500' },
+                    { label: 'Precisione', value: selectedModule.accuracy * 100, color: 'bg-green-500' },
+                    { label: 'Utilizzo GPU', value: selectedModule.gpuUsage, color: 'bg-purple-500' },
                     { label: 'Throughput', value: Math.min(selectedModule.fps / 10, 100), color: 'bg-cyan-500' },
                   ].map(p => (
                     <div key={p.label}>
@@ -167,7 +167,7 @@ export default function AIEnginePage() {
 
         {/* GPU Cluster */}
         <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
-          <h2 className="text-sm md:text-base font-semibold mb-3">GPU Cluster Status</h2>
+          <h2 className="text-sm md:text-base font-semibold mb-3">Stato Cluster GPU</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: globalStats.gpuCluster.total }, (_, i) => (
               <div key={i} className="bg-ci-bg border border-ci-border rounded-lg p-3 text-center">
@@ -176,11 +176,11 @@ export default function AIEnginePage() {
                 <div className="h-2 bg-ci-card rounded-full mt-2 overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full" style={{ width: `${55 + Math.random() * 35}%` }} />
                 </div>
-                <p className="text-[10px] text-ci-muted mt-1">80GB VRAM • Active</p>
+                <p className="text-[10px] text-ci-muted mt-1">80GB VRAM • Attivo</p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-ci-muted mt-3 text-center">Uptime: {globalStats.uptime}% • Ultimo restart: {new Date(globalStats.lastRestart).toLocaleDateString('it-IT')}</p>
+          <p className="text-xs text-ci-muted mt-3 text-center">Uptime: {globalStats.uptime}% • Ultimo riavvio: {new Date(globalStats.lastRestart).toLocaleDateString('it-IT')}</p>
         </div>
       </main>
     </NavShell>

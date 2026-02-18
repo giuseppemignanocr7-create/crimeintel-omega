@@ -106,31 +106,31 @@ export default function CasesPage() {
 
         {showCreate && (
           <div className="mb-4 md:mb-6 bg-ci-card border border-ci-border rounded-lg p-4 md:p-6">
-            <h3 className="font-semibold mb-3 md:mb-4">Create New Case</h3>
+            <h3 className="font-semibold mb-3 md:mb-4">Crea Nuovo Caso</h3>
             <input
               type="text"
-              placeholder="Case title"
+              placeholder="Titolo del caso"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               className="w-full mb-3 px-3 md:px-4 py-2.5 bg-ci-bg border border-ci-border rounded focus:border-ci-accent focus:outline-none text-ci-text"
             />
             <textarea
-              placeholder="Description (optional)"
+              placeholder="Descrizione (opzionale)"
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               className="w-full mb-3 px-3 md:px-4 py-2.5 bg-ci-bg border border-ci-border rounded focus:border-ci-accent focus:outline-none text-ci-text h-20 resize-none"
             />
             <div className="flex gap-2">
-              <button onClick={handleCreate} className="flex-1 md:flex-none px-4 py-2.5 bg-ci-accent hover:bg-ci-accent-hover text-white rounded transition text-sm">Create</button>
-              <button onClick={() => setShowCreate(false)} className="flex-1 md:flex-none px-4 py-2.5 bg-ci-border hover:bg-gray-600 rounded transition text-sm">Cancel</button>
+              <button onClick={handleCreate} className="flex-1 md:flex-none px-4 py-2.5 bg-ci-accent hover:bg-ci-accent-hover text-white rounded transition text-sm">Crea</button>
+              <button onClick={() => setShowCreate(false)} className="flex-1 md:flex-none px-4 py-2.5 bg-ci-border hover:bg-gray-600 rounded transition text-sm">Annulla</button>
             </div>
           </div>
         )}
 
         {loading ? (
-          <div className="text-center text-ci-muted py-12">Loading cases...</div>
+          <div className="text-center text-ci-muted py-12">Caricamento casi...</div>
         ) : cases.length === 0 ? (
-          <div className="text-center text-ci-muted py-12">No cases found</div>
+          <div className="text-center text-ci-muted py-12">Nessun caso trovato</div>
         ) : (
           <div className="space-y-2 md:space-y-3">
             {cases.map((c: any) => (

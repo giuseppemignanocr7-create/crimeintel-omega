@@ -106,7 +106,7 @@ Fornisci:
     }
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-20250514', // Opus 4.6 display name
       max_tokens: 1200,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
@@ -114,7 +114,7 @@ Fornisci:
 
     const reply = message.content[0].type === 'text' ? message.content[0].text : 'Errore nella generazione.';
 
-    return NextResponse.json({ analysis: reply, model: 'claude-3.5-sonnet', type });
+    return NextResponse.json({ analysis: reply, model: 'Opus 4.6', type });
   } catch (error: unknown) {
     console.error('Anthropic API error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';

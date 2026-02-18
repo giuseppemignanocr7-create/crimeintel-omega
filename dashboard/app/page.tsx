@@ -26,7 +26,7 @@ export default function HomePage() {
   }, [router]);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent text-xl">Loading CrimeIntel...</div></div>;
+    return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="animate-pulse text-ci-accent text-xl">Caricamento CrimeIntel...</div></div>;
   }
 
   const analytics = DEMO_ANALYTICS;
@@ -259,8 +259,8 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="text-lg">⚡</span>
-              <h2 className="text-sm md:text-base font-semibold">AI Threat Assessment</h2>
-              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Claude AI</span>
+              <h2 className="text-sm md:text-base font-semibold">Valutazione Minacce AI</h2>
+              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Opus 4.6</span>
             </div>
             <button
               onClick={async () => {
@@ -303,7 +303,7 @@ export default function HomePage() {
                 <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
-              <span className="text-sm text-ci-muted">Claude sta analizzando le minacce attive...</span>
+              <span className="text-sm text-ci-muted">Opus 4.6 sta analizzando le minacce attive...</span>
             </div>
           )}
           {threatAnalysis && !threatLoading && (
@@ -316,7 +316,7 @@ export default function HomePage() {
             }} />
           )}
           {!threatAnalysis && !threatLoading && (
-            <p className="text-xs text-ci-muted">Clicca "Genera Assessment" per ottenere un&apos;analisi AI delle minacce attive basata su casi, hot zones e pattern.</p>
+            <p className="text-xs text-ci-muted">Clicca "Genera Assessment" per ottenere un'analisi AI delle minacce attive basata su casi, zone calde e pattern.</p>
           )}
         </div>
 
