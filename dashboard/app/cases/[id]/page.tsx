@@ -15,6 +15,10 @@ export default function CaseDetailPage() {
   const [fusion, setFusion] = useState<any>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [evAnalysis, setEvAnalysis] = useState<Record<string, string>>({});
+  const [evAiLoading, setEvAiLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -78,6 +82,81 @@ export default function CaseDetailPage() {
     }
   };
 
+  const handleAiAnalysis = async () => {
+    if (!caseData) return;
+    setAiLoading(true);
+    setAiAnalysis(null);
+    try {
+      const res = await fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'case_analysis',
+          data: {
+            title: caseData.title,
+            caseNumber: caseData.caseNumber,
+            status: caseData.status,
+            priority: caseData.priority,
+            description: caseData.description,
+            locationName: caseData.locationName,
+            tags: caseData.tags,
+            createdAt: caseData.createdAt,
+            evidenceCount: caseData.evidence?.length || 0,
+            evidenceTypes: [...new Set(caseData.evidence?.map((e: any) => e.type) || [])],
+            evidence: caseData.evidence?.slice(0, 10),
+            fusion: fusion,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setAiAnalysis(data.analysis);
+    } catch (err) {
+      setAiAnalysis('⚠️ Errore nell\'analisi AI: ' + (err instanceof Error ? err.message : 'Riprova tra poco.'));
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleEvAiAnalysis = async (ev: any) => {
+    setEvAiLoading(ev.id);
+    try {
+      const res = await fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'evidence_analysis',
+          data: {
+            fileName: ev.fileName,
+            type: ev.type,
+            fileSize: ev.fileSize,
+            hash: ev.hash,
+            aiStatus: ev.aiStatus,
+            caseName: caseData?.title,
+            createdAt: ev.createdAt,
+            aiResults: ev.aiResults,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setEvAnalysis(prev => ({ ...prev, [ev.id]: data.analysis }));
+    } catch (err) {
+      setEvAnalysis(prev => ({ ...prev, [ev.id]: '⚠️ Errore: ' + (err instanceof Error ? err.message : 'Riprova.') }));
+    } finally {
+      setEvAiLoading(null);
+    }
+  };
+
+  const renderMd = (text: string) => {
+    return text
+      .replace(/## (.+)/g, '<h3 class="text-sm font-bold mt-3 mb-1 text-ci-text">$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/- (.+)/g, '<div class="flex gap-1.5 ml-1"><span class="text-ci-accent">•</span><span>$1</span></div>')
+      .replace(/\n/g, '<br/>');
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen min-h-[100dvh]"><div className="text-ci-accent">Loading case...</div></div>;
   }
@@ -107,7 +186,10 @@ export default function CaseDetailPage() {
               {caseData.locationName && <span className="text-ci-muted truncate max-w-[200px] md:max-w-none">{caseData.locationName}</span>}
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex flex-wrap gap-2 flex-shrink-0">
+            <button onClick={handleAiAnalysis} disabled={aiLoading} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded text-sm transition disabled:opacity-50 font-medium">
+              {aiLoading ? '🧠 Analisi...' : '🧠 AI Analysis'}
+            </button>
             <button onClick={handleRunFusion} disabled={fusionLoading} className="flex-1 md:flex-none px-3 md:px-4 py-2.5 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white rounded text-sm transition disabled:opacity-50">
               {fusionLoading ? 'Running...' : 'HyperFusion'}
             </button>
@@ -116,6 +198,29 @@ export default function CaseDetailPage() {
             </button>
           </div>
         </div>
+
+        {/* AI Analysis Results */}
+        {(aiAnalysis || aiLoading) && (
+          <div className="bg-gradient-to-r from-green-500/5 to-emerald-500/5 border-2 border-green-500/30 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">🧠</span>
+              <h2 className="font-bold text-sm md:text-base text-green-400">AI Case Analysis</h2>
+              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Claude 3.5</span>
+            </div>
+            {aiLoading ? (
+              <div className="flex items-center gap-3 py-4">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                <span className="text-sm text-ci-muted">Analisi AI in corso... Claude sta esaminando il caso</span>
+              </div>
+            ) : (
+              <div className="text-sm leading-relaxed text-ci-text" dangerouslySetInnerHTML={{ __html: renderMd(aiAnalysis || '') }} />
+            )}
+          </div>
+        )}
 
         {/* Evidence Upload */}
         <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-5 mb-4 md:mb-6">
@@ -144,19 +249,33 @@ export default function CaseDetailPage() {
           ) : (
             <div className="space-y-2">
               {caseData.evidence?.map((ev: any) => (
-                <div key={ev.id} className="flex items-start sm:items-center justify-between gap-2 bg-ci-bg rounded p-3 border border-ci-border">
-                  <div className="flex items-start sm:items-center gap-2 md:gap-3 min-w-0">
-                    <span className="text-xs font-mono bg-ci-accent/20 text-ci-accent px-2 py-1 rounded flex-shrink-0">{typeIcon[ev.type] || '?'}</span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{ev.fileName}</p>
-                      <p className="text-xs text-ci-muted">
-                        {ev.fileSize > 1048576 ? `${(ev.fileSize / 1048576).toFixed(1)}MB` : `${(ev.fileSize / 1024).toFixed(1)}KB`}
-                        <span className="hidden sm:inline"> · {ev.hash?.substring(0, 12)}...</span>
-                        {' · AI: '}<span className={ev.aiStatus === 'COMPLETED' ? 'text-ci-success' : ev.aiStatus === 'PROCESSING' ? 'text-ci-warning' : 'text-ci-muted'}>{ev.aiStatus}</span>
-                      </p>
+                <div key={ev.id}>
+                  <div className="flex items-start sm:items-center justify-between gap-2 bg-ci-bg rounded p-3 border border-ci-border">
+                    <div className="flex items-start sm:items-center gap-2 md:gap-3 min-w-0">
+                      <span className="text-xs font-mono bg-ci-accent/20 text-ci-accent px-2 py-1 rounded flex-shrink-0">{typeIcon[ev.type] || '?'}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{ev.fileName}</p>
+                        <p className="text-xs text-ci-muted">
+                          {ev.fileSize > 1048576 ? `${(ev.fileSize / 1048576).toFixed(1)}MB` : `${(ev.fileSize / 1024).toFixed(1)}KB`}
+                          <span className="hidden sm:inline"> · {ev.hash?.substring(0, 12)}...</span>
+                          {' · AI: '}<span className={ev.aiStatus === 'COMPLETED' ? 'text-ci-success' : ev.aiStatus === 'PROCESSING' ? 'text-ci-warning' : 'text-ci-muted'}>{ev.aiStatus}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleEvAiAnalysis(ev); }}
+                        disabled={evAiLoading === ev.id}
+                        className="text-[10px] px-2 py-1 bg-green-500/20 text-green-400 hover:bg-green-500/30 rounded transition disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {evAiLoading === ev.id ? '...' : '🧠 AI'}
+                      </button>
+                      <span className="text-xs text-ci-muted whitespace-nowrap hidden sm:block">{new Date(ev.createdAt).toLocaleString()}</span>
                     </div>
                   </div>
-                  <span className="text-xs text-ci-muted whitespace-nowrap flex-shrink-0 hidden sm:block">{new Date(ev.createdAt).toLocaleString()}</span>
+                  {evAnalysis[ev.id] && (
+                    <div className="mt-2 p-3 bg-green-500/5 border border-green-500/20 rounded text-xs leading-relaxed" dangerouslySetInnerHTML={{ __html: renderMd(evAnalysis[ev.id]) }} />
+                  )}
                 </div>
               ))}
             </div>

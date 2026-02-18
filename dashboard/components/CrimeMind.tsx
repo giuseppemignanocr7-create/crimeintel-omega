@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { DEMO_CASES, DEMO_ANALYTICS, DEMO_AUDIT_LOG, DEMO_USERS } from '@/lib/mock-data';
-import api from '@/lib/api';
+import { DEMO_CASES } from '@/lib/mock-data';
 
 interface Message {
   id: string;
@@ -16,12 +15,12 @@ interface Message {
 const SUGGESTIONS = [
   { text: '📂 Mostra casi critici', cmd: '/casi-critici' },
   { text: '📊 Report analytics', cmd: '/analytics' },
-  { text: '➕ Crea nuovo caso', cmd: '/crea-caso' },
   { text: '🔍 Cerca prove', cmd: '/cerca' },
-  { text: '👥 Lista utenti attivi', cmd: '/utenti' },
+  { text: '🧠 Analizza pattern criminali', cmd: 'Analizza i pattern criminali attivi e suggerisci correlazioni' },
+  { text: '⚠️ Valutazione minacce', cmd: 'Genera una valutazione delle minacce attuali basata sui casi attivi' },
+  { text: '🕵️ Profilo criminale', cmd: 'Crea un profilo criminale basato sui casi di rapina attivi' },
   { text: '📋 Ultimi audit log', cmd: '/audit' },
-  { text: '🧠 Status AI engine', cmd: '/ai-status' },
-  { text: '🗺️ Casi per città', cmd: '/mappa' },
+  { text: '💡 Cosa puoi fare?', cmd: '/aiuto' },
 ];
 
 export function CrimeMind() {
@@ -33,12 +32,13 @@ export function CrimeMind() {
     {
       id: 'welcome',
       role: 'ai',
-      text: 'Ciao! Sono **CrimeMind**, il tuo assistente AI. Posso aiutarti a navigare, cercare casi, creare nuovi record, analizzare dati e molto altro.\n\nProva a scrivermi qualcosa o usa i suggerimenti rapidi qui sotto.',
+      text: 'Ciao! Sono **CrimeMind**, il tuo assistente AI investigativo powered by **GPT-4o**.\n\nPosso analizzare casi, correlare prove, generare profili criminali, valutare minacce e molto altro.\n\nScrivimi qualsiasi cosa in linguaggio naturale! 🧠',
       timestamp: new Date(),
     },
   ]);
   const [typing, setTyping] = useState(false);
   const [pulse, setPulse] = useState(true);
+  const [aiMode, setAiMode] = useState<'gpt4o' | 'offline'>('gpt4o');
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,182 +53,87 @@ export function CrimeMind() {
     }
   }, [open]);
 
-  const addMsg = (role: 'user' | 'ai', text: string, actions?: Message['actions']) => {
+  const addMsg = useCallback((role: 'user' | 'ai', text: string, actions?: Message['actions']) => {
     setMessages(prev => [...prev, { id: `${Date.now()}-${Math.random()}`, role, text, actions, timestamp: new Date() }]);
-  };
+  }, []);
 
-  const simulateTyping = (callback: () => void) => {
-    setTyping(true);
-    const delay = 400 + Math.random() * 800;
-    setTimeout(() => { setTyping(false); callback(); }, delay);
-  };
+  const callGPT4o = useCallback(async (userText: string, allMessages: Message[]) => {
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: allMessages.filter(m => m.id !== 'welcome').map(m => ({ role: m.role, text: m.text })),
+          context: { page: pathname },
+        }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setAiMode('gpt4o');
+      return data.reply as string;
+    } catch (err) {
+      console.error('GPT-4o error, falling back:', err);
+      setAiMode('offline');
+      return null;
+    }
+  }, [pathname]);
 
-  const processCommand = (raw: string) => {
+  const processCommand = useCallback(async (raw: string) => {
     const q = raw.trim().toLowerCase();
-    addMsg('user', raw.trim());
+    const userText = raw.trim();
+    addMsg('user', userText);
     setInput('');
 
-    // Navigation commands
-    if (q.includes('/home') || q.includes('command center') || q.includes('dashboard') || q.includes('homepage')) {
-      simulateTyping(() => {
-        addMsg('ai', '🏠 Ti porto alla **Command Center**!', [{ label: 'Vai →', action: () => router.push('/') }]);
-        router.push('/');
-      });
-      return;
-    }
+    // ---- Quick local commands (instant, no API call) ----
 
-    if (q === '/casi-critici' || q.includes('casi critici') || q.includes('casi urgenti') || q.includes('critical')) {
-      const critical = DEMO_CASES.filter(c => c.priority === 'CRITICAL' || c.priority === 'HIGH');
-      simulateTyping(() => {
-        const list = critical.slice(0, 5).map(c => `• **${c.caseNumber}** — ${c.title} _(${c.priority}, ${c.status})_`).join('\n');
-        addMsg('ai', `🚨 Ho trovato **${critical.length} casi ad alta priorità**:\n\n${list}`, 
-          critical.slice(0, 3).map(c => ({ label: `Apri ${c.caseNumber}`, action: () => router.push(`/cases/${c.id}`) }))
-        );
-      });
-      return;
-    }
-
-    if (q === '/analytics' || q.includes('report analytics') || q.includes('statistiche') || q.includes('analytics')) {
-      const a = DEMO_ANALYTICS;
-      simulateTyping(() => {
-        addMsg('ai', `📊 **Report Analytics Rapido:**\n\n• Casi totali: **${a.casesByStatus.reduce((s: number, x: { count: number }) => s + x.count, 0)}**\n• Prove totali: **${a.evidencePerType.reduce((s: number, x: { count: number }) => s + x.count, 0)}**\n• AI completate: **${a.aiProcessing.completed}**\n• AI in elaborazione: **${a.aiProcessing.processing}**\n• Errori AI: **${a.aiProcessing.failed}**`,
-          [{ label: 'Vai ad Analytics', action: () => router.push('/analytics') }]
-        );
-      });
-      return;
-    }
-
-    if (q === '/crea-caso' || q.includes('crea caso') || q.includes('nuovo caso') || q.includes('crea un caso') || q.includes('new case')) {
-      simulateTyping(() => {
-        addMsg('ai', '➕ Ti porto alla pagina **Casi** con il modulo di creazione aperto. Clicca **"+ Nuovo Caso"** per procedere.', 
-          [{ label: 'Vai a Casi', action: () => router.push('/cases') }]
-        );
-        router.push('/cases');
-      });
-      return;
-    }
-
-    if (q === '/cerca' || q.includes('cerca') || q.includes('search') || q.includes('neurosearch')) {
-      simulateTyping(() => {
-        addMsg('ai', '🔍 Ti porto su **NeuroSearch** — il motore di ricerca semantica AI per prove, casi e metadati.', 
-          [{ label: 'Vai a NeuroSearch', action: () => router.push('/search') }]
-        );
-        router.push('/search');
-      });
-      return;
-    }
-
-    if (q === '/utenti' || q.includes('utenti') || q.includes('users') || q.includes('lista utenti')) {
-      const active = DEMO_USERS.filter(u => u.isActive);
-      const roles = DEMO_USERS.reduce((acc: Record<string, number>, u) => { acc[u.role] = (acc[u.role] || 0) + 1; return acc; }, {});
-      const roleStr = Object.entries(roles).map(([r, c]) => `${r}: ${c}`).join(', ');
-      simulateTyping(() => {
-        addMsg('ai', `👥 **Utenti sulla piattaforma:**\n\n• Totale: **${DEMO_USERS.length}**\n• Attivi: **${active.length}**\n• Ruoli: ${roleStr}`,
-          [{ label: 'Gestione Utenti', action: () => router.push('/users') }]
-        );
-      });
-      return;
-    }
-
-    if (q === '/audit' || q.includes('audit') || q.includes('log operazioni')) {
-      const recent = DEMO_AUDIT_LOG.slice(0, 5);
-      simulateTyping(() => {
-        const list = recent.map(l => `• **${l.action}** — ${l.user.name} _(${new Date(l.createdAt).toLocaleDateString('it-IT')})_`).join('\n');
-        addMsg('ai', `📋 **Ultimi eventi Audit Log:**\n\n${list}\n\nTotale eventi: **${DEMO_AUDIT_LOG.length}**`,
-          [{ label: 'Vai ad Audit Log', action: () => router.push('/audit') }]
-        );
-      });
-      return;
-    }
-
-    if (q === '/ai-status' || q.includes('status ai') || q.includes('engine') || q.includes('ai engine')) {
-      const a = DEMO_ANALYTICS.aiProcessing;
-      const total = a.completed + a.processing + a.pending + a.failed;
-      const rate = Math.round(a.completed / total * 100);
-      simulateTyping(() => {
-        addMsg('ai', `🧠 **Status AI Engine:**\n\n• ✅ Completate: **${a.completed}** (${rate}%)\n• ⏳ In elaborazione: **${a.processing}**\n• 📋 In coda: **${a.pending}**\n• ❌ Errori: **${a.failed}**\n\nPerformance globale: **${rate >= 80 ? 'Ottima' : rate >= 60 ? 'Buona' : 'Da migliorare'}** 🟢`);
-      });
-      return;
-    }
-
-    if (q === '/mappa' || q.includes('città') || q.includes('mappa') || q.includes('geograf') || q.includes('location')) {
-      const locations: Record<string, number> = {};
-      DEMO_CASES.forEach(c => { if (c.locationName) { const city = c.locationName.split(',')[0]; locations[city] = (locations[city] || 0) + 1; } });
-      const sorted = Object.entries(locations).sort((a, b) => b[1] - a[1]);
-      simulateTyping(() => {
-        const list = sorted.map(([city, count]) => `• **${city}**: ${count} casi`).join('\n');
-        addMsg('ai', `🗺️ **Distribuzione geografica casi:**\n\n${list}`,
-          [{ label: 'Vedi Analytics', action: () => router.push('/analytics') }]
-        );
-      });
-      return;
-    }
-
-    // Search for a case by keyword
-    if (q.includes('caso') || q.includes('case') || q.includes('trova') || q.includes('find')) {
-      const keywords = q.replace(/caso|case|trova|find|mostra|show|apri|open/gi, '').trim();
-      if (keywords.length > 1) {
-        const found = DEMO_CASES.filter(c => 
-          c.title.toLowerCase().includes(keywords) || 
-          c.description.toLowerCase().includes(keywords) || 
-          c.caseNumber.toLowerCase().includes(keywords) ||
-          c.tags.some(t => t.toLowerCase().includes(keywords))
-        );
-        if (found.length > 0) {
-          simulateTyping(() => {
-            const list = found.slice(0, 5).map(c => `• **${c.caseNumber}** — ${c.title} _(${c.status})_`).join('\n');
-            addMsg('ai', `🔎 Ho trovato **${found.length} casi** per "${keywords}":\n\n${list}`,
-              found.slice(0, 3).map(c => ({ label: `Apri ${c.caseNumber}`, action: () => router.push(`/cases/${c.id}`) }))
-            );
-          });
-          return;
-        }
+    // Navigation
+    const navRoutes: Record<string, string> = {
+      '/home': '/', 'command center': '/', 'dashboard': '/', 'homepage': '/',
+      '/crea-caso': '/cases', 'nuovo caso': '/cases', 'crea caso': '/cases',
+      '/cerca': '/search', 'neurosearch': '/search',
+      '/analytics': '/analytics', '/audit': '/audit', '/utenti': '/users',
+    };
+    for (const [key, route] of Object.entries(navRoutes)) {
+      if (q === key || q.includes(key)) {
+        addMsg('ai', `🧭 Ti porto a **${route}**!`);
+        router.push(route);
+        return;
       }
     }
 
-    // Delete / close case
-    if (q.includes('elimina') || q.includes('delete') || q.includes('chiudi caso') || q.includes('close case')) {
-      simulateTyping(() => {
-        addMsg('ai', '⚠️ Per motivi di sicurezza, l\'eliminazione o chiusura di un caso richiede conferma manuale. Ti porto alla pagina del caso dove puoi procedere.\n\nSpecifica il numero del caso (es. "elimina CI-2026-0001") per procedere.');
-      });
+    // Quick data lookups
+    if (q === '/casi-critici' || q === 'casi critici') {
+      const critical = DEMO_CASES.filter(c => c.priority === 'CRITICAL' || c.priority === 'HIGH');
+      const list = critical.slice(0, 5).map(c => `• **${c.caseNumber}** — ${c.title} _(${c.priority}, ${c.status})_`).join('\n');
+      addMsg('ai', `🚨 **${critical.length} casi ad alta priorità:**\n\n${list}`,
+        critical.slice(0, 3).map(c => ({ label: `Apri ${c.caseNumber}`, action: () => router.push(`/cases/${c.id}`) }))
+      );
       return;
     }
 
-    // Help
-    if (q.includes('help') || q.includes('aiuto') || q.includes('cosa puoi') || q.includes('comandi')) {
-      simulateTyping(() => {
-        addMsg('ai', '💡 **Ecco cosa posso fare:**\n\n• 🔍 **Cercare casi** — "trova rapina" o "caso CI-2026-0001"\n• ➕ **Creare nuovi casi** — "crea nuovo caso"\n• 📊 **Report analytics** — "mostra statistiche"\n• 🚨 **Casi critici** — "mostra casi urgenti"\n• 👥 **Gestire utenti** — "lista utenti attivi"\n• 📋 **Audit log** — "ultimi log operazioni"\n• 🧠 **Status AI** — "status ai engine"\n• 🗺️ **Mappa casi** — "casi per città"\n• 🧭 **Navigare** — "vai a [pagina]"\n\nScrivi in linguaggio naturale, capisco l\'italiano! 🇮🇹');
-      });
+    if (q === '/aiuto' || q === 'aiuto' || q === 'help') {
+      addMsg('ai', '💡 **CrimeMind AI — Powered by GPT-4o**\n\nPuoi chiedermi qualsiasi cosa in linguaggio naturale:\n\n• 🔍 **"Analizza il caso rapina Milano"** — analisi investigativa AI\n• 🧠 **"Quali pattern vedi tra i casi attivi?"** — correlazioni\n• 🕵️ **"Crea un profilo criminale"** — profilazione AI\n• ⚠️ **"Valutazione minacce"** — threat assessment\n• 📊 **"Statistiche piattaforma"** — dati real-time\n• 🗺️ **"Casi per zona geografica"** — distribuzione\n• 🧭 **"Vai a [pagina]"** — navigazione\n\nScrivi liberamente, capisco il contesto! 🇮🇹');
       return;
     }
 
-    // Greetings
-    if (q.match(/^(ciao|hey|hello|salve|buongiorno|buonasera|hi)/)) {
-      simulateTyping(() => {
-        addMsg('ai', `Ciao! 👋 Come posso aiutarti oggi? Stai visualizzando la pagina **${pathname}**.\n\nUsa i suggerimenti rapidi o scrivi una richiesta.`);
-      });
-      return;
+    // ---- Everything else goes to GPT-4o ----
+    setTyping(true);
+    const currentMessages = [...messages, { id: 'temp', role: 'user' as const, text: userText, timestamp: new Date() }];
+    const reply = await callGPT4o(userText, currentMessages);
+    setTyping(false);
+
+    if (reply) {
+      addMsg('ai', reply);
+    } else {
+      // Offline fallback
+      addMsg('ai', '⚠️ AI temporaneamente non disponibile. Riprova tra poco o usa i suggerimenti rapidi per comandi locali.');
     }
+  }, [addMsg, callGPT4o, messages, router]);
 
-    // Page context awareness
-    if (q.includes('dove sono') || q.includes('pagina attuale') || q.includes('where')) {
-      const pageNames: Record<string, string> = { '/': 'Command Center', '/cases': 'Gestione Casi', '/search': 'NeuroSearch', '/analytics': 'Analytics', '/audit': 'Audit Log', '/users': 'Gestione Utenti' };
-      simulateTyping(() => {
-        addMsg('ai', `📍 Ti trovi su **${pageNames[pathname] || pathname}**.\n\nVuoi che ti aiuti con qualcosa in questa sezione?`);
-      });
-      return;
-    }
-
-    // Fallback — intelligent response
-    simulateTyping(() => {
-      addMsg('ai', `🤔 Non ho capito bene la richiesta "${raw.trim()}". Prova con:\n\n• **"aiuto"** per vedere tutti i comandi\n• **"trova [parola chiave]"** per cercare casi\n• **"vai a [pagina]"** per navigare\n• Oppure usa i suggerimenti rapidi qui sotto.`);
-    });
-  };
-
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = useCallback(() => {
+    if (!input.trim() || typing) return;
     processCommand(input);
-  };
+  }, [input, typing, processCommand]);
 
   const renderMarkdown = (text: string) => {
     return text
@@ -270,10 +175,15 @@ export function CrimeMind() {
               🧠
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-ci-text">CrimeMind AI</p>
-              <p className="text-[10px] text-purple-400">Assistente Investigativo • Online</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold text-ci-text">CrimeMind AI</p>
+                <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${aiMode === 'gpt4o' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                  {aiMode === 'gpt4o' ? 'GPT-4o' : 'OFFLINE'}
+                </span>
+              </div>
+              <p className="text-[10px] text-purple-400">Assistente Investigativo AI • {aiMode === 'gpt4o' ? 'Live' : 'Locale'}</p>
             </div>
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className={`w-2 h-2 rounded-full animate-pulse ${aiMode === 'gpt4o' ? 'bg-green-500' : 'bg-yellow-500'}`} />
           </div>
 
           {/* Messages */}

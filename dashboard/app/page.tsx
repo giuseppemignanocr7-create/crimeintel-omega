@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { DEMO_CASES, DEMO_ANALYTICS } from '@/lib/mock-data';
+import { DEMO_CASES, DEMO_ANALYTICS, DEMO_PREDICTIVE } from '@/lib/mock-data';
 import { NavShell } from '@/components/NavShell';
 
 export default function HomePage() {
@@ -13,6 +13,8 @@ export default function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [cases, setCases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [threatAnalysis, setThreatAnalysis] = useState<string | null>(null);
+  const [threatLoading, setThreatLoading] = useState(false);
 
   useEffect(() => {
     const token = api.getToken();
@@ -250,6 +252,72 @@ export default function HomePage() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* AI Threat Assessment */}
+        <div className="bg-ci-card border border-ci-border rounded-lg p-4 md:p-6 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">⚡</span>
+              <h2 className="text-sm md:text-base font-semibold">AI Threat Assessment</h2>
+              <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">Claude AI</span>
+            </div>
+            <button
+              onClick={async () => {
+                setThreatLoading(true);
+                setThreatAnalysis(null);
+                try {
+                  const res = await fetch('/api/ai/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      type: 'threat_assessment',
+                      data: {
+                        activeCases: cases.filter(c => c.status === 'ACTIVE').length,
+                        criticalCases: criticalCases.length,
+                        hotZones: DEMO_PREDICTIVE.hotZones,
+                        patterns: DEMO_PREDICTIVE.patterns,
+                        highRiskEntities: 5,
+                      },
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data.error) throw new Error(data.error);
+                  setThreatAnalysis(data.analysis);
+                } catch (err) {
+                  setThreatAnalysis('⚠️ Errore: ' + (err instanceof Error ? err.message : 'Riprova.'));
+                } finally {
+                  setThreatLoading(false);
+                }
+              }}
+              disabled={threatLoading}
+              className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white rounded text-xs transition disabled:opacity-50 font-medium"
+            >
+              {threatLoading ? '🧠 Analisi...' : '🧠 Genera Assessment'}
+            </button>
+          </div>
+          {threatLoading && (
+            <div className="flex items-center gap-3 py-3">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+              <span className="text-sm text-ci-muted">Claude sta analizzando le minacce attive...</span>
+            </div>
+          )}
+          {threatAnalysis && !threatLoading && (
+            <div className="text-sm leading-relaxed text-ci-text" dangerouslySetInnerHTML={{ __html: threatAnalysis
+              .replace(/## (.+)/g, '<h3 class="text-sm font-bold mt-3 mb-1 text-ci-text">$1</h3>')
+              .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*(.+?)\*/g, '<em>$1</em>')
+              .replace(/- (.+)/g, '<div class="flex gap-1.5 ml-1"><span class="text-red-400">•</span><span>$1</span></div>')
+              .replace(/\n/g, '<br/>')
+            }} />
+          )}
+          {!threatAnalysis && !threatLoading && (
+            <p className="text-xs text-ci-muted">Clicca "Genera Assessment" per ottenere un&apos;analisi AI delle minacce attive basata su casi, hot zones e pattern.</p>
+          )}
         </div>
 
         {/* Quick Navigation */}
